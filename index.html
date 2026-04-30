@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CHIC & GLAM — Boutique Prêt-à-Porter</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.0/firebase-app.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.0/firebase-auth.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.0/firebase-firestore.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.0/firebase-storage.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAF8F5;--bg2:#F2EFE9;--bg3:#E8E4DC;
+  --green:#1A3528;--green2:#244A37;--green3:#2E6049;
+  --gold:#C9A84C;--gold2:#B8922E;--gold3:#E8C97A;
+  --text:#1C1A17;--text2:#5C574F;--text3:#9C9589;
+  --white:#FFFFFF;--danger:#B85C5C;--success:#3A7A5A;
+  --border:#DDD8CF;--border2:#C8C3B8;
+  --shadow:0 2px 12px rgba(26,53,40,0.08);--shadow2:0 4px 24px rgba(26,53,40,0.14);
+  --r:10px;--r2:6px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.hidden{display:none!important}
+/* =========== AUTH =========== */
+#screen-auth{min-height:100vh;display:flex}
+.auth-left{width:420px;flex-shrink:0;background:var(--green);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;position:relative;overflow:hidden}
+.auth-left::before{content:'';position:absolute;width:400px;height:400px;border:1px solid rgba(201,168,76,0.15);border-radius:50%;top:-100px;left:-100px}
+.auth-left::after{content:'';position:absolute;width:300px;height:300px;border:1px solid rgba(201,168,76,0.1);border-radius:50%;bottom:-80px;right:-80px}
+.auth-logo{text-align:center;position:relative;z-index:1}
+.auth-logo h1{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--gold3);letter-spacing:6px}
+.auth-logo p{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-top:8px}
+.auth-logo .auth-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:rgba(232,201,122,0.6);margin-top:32px;line-height:1.6}
+.auth-right{flex:1;display:flex;align-items:center;justify-content:center;padding:48px;background:var(--bg)}
+.auth-box{width:100%;max-width:400px}
+.auth-mode-tabs{display:flex;gap:0;margin-bottom:32px;border:1px solid var(--border2);border-radius:var(--r);overflow:hidden}
+.auth-mode-tab{flex:1;padding:12px;text-align:center;cursor:pointer;font-size:13px;font-weight:500;color:var(--text3);background:var(--white);border:none;transition:all .2s}
+.auth-mode-tab.active{background:var(--green);color:var(--white)}
+.auth-subtitle{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;margin-bottom:8px}
+.auth-desc{font-size:13px;color:var(--text3);margin-bottom:28px}
+.auth-form-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border)}
+.auth-form-tab{padding:10px 20px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.auth-form-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase}
+input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--r2);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);transition:border .15s;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,53,40,0.08)}
+.auth-demo-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--gold2);margin-bottom:20px;font-weight:500}
+/* =========== BUTTONS =========== */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--r2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;user-select:none}
+.btn-primary{background:var(--green);color:var(--white)}.btn-primary:hover{background:var(--green2)}
+.btn-gold{background:var(--gold);color:var(--white)}.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2)}.btn-outline:hover{background:var(--bg2)}
+.btn-danger{background:#F5E8E8;color:var(--danger);border:none}.btn-danger:hover{background:#EED8D8}
+.btn-ghost{background:none;border:none;cursor:pointer;color:var(--text3);display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:6px 10px;border-radius:var(--r2)}.btn-ghost:hover{background:var(--bg2);color:var(--text)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-lg{padding:14px 28px;font-size:15px}
+.btn-full{width:100%;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* =========== ADMIN LAYOUT =========== */
+#screen-admin{display:flex;min-height:100vh}
+.sidebar{width:240px;min-height:100vh;background:var(--green);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sidebar-brand{padding:24px 22px 18px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sidebar-brand h1{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--gold3);letter-spacing:2px}
+.sidebar-brand p{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
+.sidebar-user{padding:12px 22px;background:rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px}
+.sidebar-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--green);flex-shrink:0}
+.sidebar-user-info p{font-size:13px;font-weight:500;color:rgba(255,255,255,0.9)}
+.sidebar-user-info span{font-size:11px;color:rgba(255,255,255,0.4)}
+.nav-section{padding:10px 22px 4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 22px;cursor:pointer;color:rgba(255,255,255,0.6);font-size:13.5px;font-weight:400;transition:all .15s;border-left:3px solid transparent;position:relative}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9)}
+.nav-item.active{background:rgba(201,168,76,0.15);color:var(--gold3);border-left-color:var(--gold)}
+.nav-icon{width:16px;height:16px;flex-shrink:0}
+.nav-badge{background:var(--danger);color:var(--white);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto}
+.sidebar-bottom{margin-top:auto;padding:16px 22px;border-top:1px solid rgba(255,255,255,0.1)}
+.admin-main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-date{font-size:12px;color:var(--text3)}
+.demo-badge{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:var(--gold2);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.5px}
+.content{padding:24px 28px;flex:1}
+/* =========== CARDS / TABLES =========== */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--text)}
+.card-body{padding:18px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;border-left:4px solid var(--gold)}
+.kpi-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:500}
+.kpi-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--text);margin:4px 0 3px}
+.kpi-sub{font-size:11px;color:var(--success);font-weight:500}
+.kpi-sub.down{color:var(--danger)}
+.kpi-icon{position:absolute;right:14px;top:14px;font-size:22px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{text-align:left;padding:10px 14px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border);background:var(--bg)}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--border2);color:var(--text)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--bg)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-success{background:#E8F5EE;color:#2A7A4A}.badge-danger{background:#F5E8E8;color:#A04040}
+.badge-warn{background:#FFF3E0;color:#B07020}.badge-info{background:#E8F0F5;color:#2060A0}
+.badge-neutral{background:var(--bg2);color:var(--text2)}.badge-gold{background:rgba(201,168,76,0.15);color:var(--gold2)}
+.badge-pending{background:#FFF3E0;color:#B07020}.badge-validated{background:#E8F5EE;color:#2A7A4A}.badge-rejected{background:#F5E8E8;color:#A04040}
+/* =========== DETTES =========== */
+.dette-card{background:var(--white);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--r);margin-bottom:12px;padding:16px 18px;transition:box-shadow .2s}
+.dette-card:hover{box-shadow:var(--shadow2)}
+.dette-card.soldee{border-left-color:var(--success);opacity:.78}
+.dette-progress-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin:8px 0 4px}
+.dette-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold2),var(--gold3));transition:width .4s}
+.dette-progress-fill.full{background:linear-gradient(90deg,var(--success),#52B880)}
+.paiement-row{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--bg);border-radius:6px;margin-top:6px;font-size:13px}
+.cancelled-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;background:#F5E8E8;color:var(--danger)}
+.sale-cancelled td{opacity:.55;text-decoration:line-through}
+/* =========== POS =========== */
+.pos-layout{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
+.product-grid-admin{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.product-tile{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .2s;text-align:center}
+.product-tile:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,168,76,0.15);transform:translateY(-2px)}
+.product-tile-img{width:60px;height:72px;object-fit:cover;border-radius:6px;margin:0 auto 8px;display:block}
+.product-tile-placeholder{width:60px;height:72px;border-radius:6px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 8px}
+.product-tile-name{font-size:12px;font-weight:500;margin-bottom:3px;line-height:1.3}
+.product-tile-price{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--gold2)}
+.product-tile-stock{font-size:10px;color:var(--text3);margin-top:2px}
+.cart-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;position:sticky;top:70px}
+.cart-item{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border2)}
+.cart-item-name{font-size:12.5px;font-weight:500;flex:1;line-height:1.3}
+.qty-btn{width:22px;height:22px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.qty-btn:hover{background:var(--bg3)}
+/* =========== IMAGE UPLOAD =========== */
+.img-upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg)}
+.img-upload-zone:hover{border-color:var(--green);background:var(--bg2)}
+.img-upload-zone.has-image{border-style:solid;border-color:var(--green)}
+.img-preview{width:100%;max-height:160px;object-fit:cover;border-radius:6px}
+.img-upload-placeholder{padding:8px 0}
+.upload-progress{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:10px;display:none}
+.upload-progress-bar{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+/* =========== MODALS =========== */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,53,40,0.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--white);border-radius:var(--r);width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.modal-lg{width:640px}
+.modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}
+.modal-body{padding:22px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.close-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);line-height:1;padding:4px}
+/* =========== CAT TABS / SEARCH =========== */
+.cat-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.cat-tab{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--white);color:var(--text2);transition:all .15s}
+.cat-tab.active{background:var(--green);color:var(--white);border-color:var(--green)}
+.search-bar{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--white);width:240px}
+.search-bar input{border:none;outline:none;padding:9px 0;flex:1;font-size:13.5px;background:transparent}
+/* =========== CHARTS =========== */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:8px;height:150px;padding:8px 0}
+.chart-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.chart-bar{width:100%;border-radius:3px 3px 0 0;background:var(--green);min-height:4px}
+.chart-bar-label{font-size:10px;color:var(--text3)}
+.chart-bar-val{font-size:10px;font-weight:500;color:var(--text2)}
+.progress-bar{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:5px}
+.progress-fill{height:100%;background:var(--gold);border-radius:4px}
+/* =========== AVATAR / UTILS =========== */
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}
+.gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}
+.mt-2{margin-top:10px}.mt-3{margin-top:16px}.mt-4{margin-top:22px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:14px}.mb-4{margin-bottom:22px}
+.text-sm{font-size:13px}.text-xs{font-size:11px}.text-muted{color:var(--text3)}.fw-5{font-weight:500}.fw-6{font-weight:600}
+.w-full{width:100%}.text-right{text-align:right}.text-center{text-align:center}
+/* =========== ORDERS PAGE =========== */
+.order-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden;transition:box-shadow .2s}
+.order-card:hover{box-shadow:var(--shadow2)}
+.order-card-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.order-card-body{padding:14px 18px}
+.order-item-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border2)}
+.order-item-row:last-child{border-bottom:none}
+.order-item-img{width:36px;height:44px;object-fit:cover;border-radius:4px}
+.order-item-placeholder{width:36px;height:44px;background:var(--bg2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.order-filter-tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border)}
+.order-filter-tab{padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.order-filter-tab.active{color:var(--green);border-bottom-color:var(--green)}
+/* =========== CLIENT SCREEN (LUXURY DARK) =========== */
+#screen-client{min-height:100vh;background:#0B0B0B;color:#F0EAD6;display:flex;flex-direction:column}
+.client-header{background:rgba(11,11,11,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.2);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.client-brand{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--gold3);letter-spacing:4px}
+.client-header-right{display:flex;align-items:center;gap:16px}
+.client-icon-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:9px 14px;cursor:pointer;color:#F0EAD6;font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;transition:all .2s;position:relative}
+.client-icon-btn:hover{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.5)}
+.cart-count{position:absolute;top:-7px;right:-7px;background:var(--gold);color:#0B0B0B;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #0B0B0B}
+.client-cat-strip{padding:16px 28px;background:#111;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.client-cat-tab{padding:7px 18px;border-radius:20px;font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(240,234,214,0.7);transition:all .2s}
+.client-cat-tab.active{background:var(--gold);color:#0B0B0B;border-color:var(--gold)}
+.client-search-bar{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid rgba(255,255,255,0.1);border-radius:20px;background:rgba(255,255,255,0.05);margin-left:auto}
+.client-search-bar input{border:none;outline:none;padding:7px 0;flex:1;font-size:13px;background:transparent;color:#F0EAD6;min-width:0}
+.client-search-bar input::placeholder{color:rgba(240,234,214,0.35)}
+.client-catalog{flex:1;padding:24px 28px}
+.client-product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.client-product-card{background:#1C1C1C;border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;transition:all .3s;cursor:pointer}
+.client-product-card:hover{transform:translateY(-4px);border-color:rgba(201,168,76,0.4);box-shadow:0 12px 40px rgba(0,0,0,0.5)}
+.client-product-img-wrap{aspect-ratio:3/4;overflow:hidden;position:relative;background:#252525}
+.client-product-img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.client-product-card:hover .client-product-img{transform:scale(1.04)}
+.client-product-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;background:linear-gradient(135deg,#1C1C1C,#282828)}
+.client-product-info{padding:14px 16px}
+.client-product-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:#F0EAD6;line-height:1.3;margin-bottom:4px}
+.client-product-cat{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(240,234,214,0.4);margin-bottom:8px}
+.client-product-price{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--gold3);margin-bottom:12px}
+.client-add-btn{width:100%;padding:10px;border:1px solid rgba(201,168,76,0.4);border-radius:8px;background:transparent;color:var(--gold3);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.client-add-btn:hover{background:var(--gold);color:#0B0B0B;border-color:var(--gold)}
+.client-add-btn:disabled{opacity:.4;cursor:not-allowed}
+/* Cart panel */
+.client-cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s}
+.client-cart-overlay.open{opacity:1;pointer-events:all}
+.client-cart-panel{position:fixed;right:-420px;top:0;bottom:0;width:420px;background:#111;border-left:1px solid rgba(201,168,76,0.2);z-index:151;display:flex;flex-direction:column;transition:right .35s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.client-cart-panel.open{right:0}
+.client-cart-header{padding:20px 22px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.client-cart-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:#F0EAD6}
+.client-cart-close{background:none;border:none;font-size:22px;cursor:pointer;color:rgba(240,234,214,0.4);transition:color .15s}
+.client-cart-close:hover{color:#F0EAD6}
+.client-cart-items{flex:1;overflow-y:auto;padding:16px 0}
+.client-cart-item{display:flex;gap:14px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,0.05);align-items:center}
+.client-cart-item-img{width:44px;height:54px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.client-cart-item-placeholder{width:44px;height:54px;background:#252525;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.client-cart-item-name{font-size:13.5px;font-weight:500;color:#F0EAD6;flex:1;line-height:1.3}
+.client-cart-item-price{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold3)}
+.client-qty-btn{width:24px;height:24px;border:1px solid rgba(255,255,255,0.15);border-radius:4px;background:rgba(255,255,255,0.05);cursor:pointer;font-size:14px;color:rgba(240,234,214,0.7);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.client-qty-btn:hover{background:rgba(201,168,76,0.2);border-color:rgba(201,168,76,0.5);color:var(--gold3)}
+.client-cart-footer{padding:20px 22px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0}
+.client-total-row{display:flex;justify-content:space-between;font-size:13px;color:rgba(240,234,214,0.6);padding:4px 0}
+.client-total-row.final{font-size:18px;font-weight:600;color:#F0EAD6;border-top:1px solid rgba(255,255,255,0.1);margin-top:8px;padding-top:12px;font-family:'Cormorant Garamond',serif}
+.client-order-btn{width:100%;padding:16px;background:var(--gold);color:#0B0B0B;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px;transition:all .2s;letter-spacing:.5px}
+.client-order-btn:hover{background:var(--gold3)}
+/* Account modal client */
+.client-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.client-modal{background:#161616;border:1px solid rgba(201,168,76,0.2);border-radius:16px;width:420px;max-height:90vh;overflow-y:auto}
+.client-modal-header{padding:22px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
+.client-modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:#F0EAD6}
+.client-modal-body{padding:24px}
+.client-form-label{display:block;font-size:11px;font-weight:500;color:rgba(240,234,214,0.5);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase}
+.client-input{width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;background:rgba(255,255,255,0.05);color:#F0EAD6;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .15s;margin-bottom:14px}
+.client-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.1)}
+.client-btn-gold{width:100%;padding:14px;background:var(--gold);color:#0B0B0B;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .2s}
+.client-btn-gold:hover{background:var(--gold3)}
+.client-form-tabs{display:flex;gap:0;margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.client-form-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;color:rgba(240,234,214,0.4);border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.client-form-tab.active{color:var(--gold3);border-bottom-color:var(--gold)}
+.client-order-history{padding-top:8px}
+.client-order-row{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:14px;margin-bottom:10px}
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:var(--white);padding:12px 20px;border-radius:var(--r2);font-size:13.5px;font-weight:500;box-shadow:var(--shadow2);z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:320px}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.error{background:var(--danger)}
+#toast.info{background:#2060A0}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+#screen-client ::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3)}
+/* Empty states */
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-state .emoji{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+.client-empty{text-align:center;padding:60px 20px;color:rgba(240,234,214,0.4)}
+.client-empty .emoji{font-size:56px;margin-bottom:16px}
+/* Rapport */
+.rapport-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.rapport-card{background:var(--bg2);border-radius:var(--r);padding:18px;text-align:center}
+.rapport-card .val{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;display:block}
+.rapport-card .lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-top:4px;display:block}
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;padding:48px;flex-direction:column;gap:12px}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:900px){
+  .client-product-grid{grid-template-columns:repeat(2,1fr)}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .auth-left{display:none}
+  .client-product-grid{grid-template-columns:1fr 1fr}
+  .client-cart-panel{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== AUTH SCREEN ==================== -->
+<div id="screen-auth">
+  <div class="auth-left">
+    <div class="auth-logo">
+      <h1>ÉLARA</h1>
+      <p>Boutique Prêt-à-Porter</p>
+      <div class="auth-tagline">"L'élégance est la seule beauté<br>qui ne se démode jamais"</div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div id="demo-banner" class="auth-demo-badge" style="margin-bottom:18px">
+        ⚡ Mode Démo actif — configurer Firebase pour la production
+      </div>
+      <div class="auth-mode-tabs">
+        <button class="auth-mode-tab active" onclick="switchMode('admin')">👔 Administrateur</button>
+        <button class="auth-mode-tab" onclick="switchMode('client')">🛍️ Espace Client</button>
+      </div>
+
+      <!-- ADMIN FORM -->
+      <div id="form-admin">
+        <h2 class="auth-subtitle">Connexion Admin</h2>
+        <p class="auth-desc">Accès au tableau de bord et à la gestion de la boutique</p>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="admin-email" value="admin@elara.com" placeholder="admin@elara.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <input type="password" id="admin-password" value="admin123" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary btn-full btn-lg mt-3" onclick="loginAdmin()" style="justify-content:center">
+          Se connecter →
+        </button>
+        <p class="text-sm text-muted text-center mt-2">Démo: admin@elara.com / admin123</p>
+      </div>
+
+      <!-- CLIENT FORM -->
+      <div id="form-client" class="hidden">
+        <h2 class="auth-subtitle">Espace Client</h2>
+        <p class="auth-desc">Créez un compte ou connectez-vous pour commander</p>
+        <div class="auth-form-tabs">
+          <button class="auth-form-tab active" onclick="switchClientTab('login')">Se connecter</button>
+          <button class="auth-form-tab" onclick="switchClientTab('register')">Créer un compte</button>
+        </div>
+        <div id="client-login-form">
+          <div class="form-group"><label class="form-label">Email</label><input type="email" id="cl-email" placeholder="votre@email.com"></div>
+          <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" id="cl-password" placeholder="••••••••"></div>
+          <button class="btn btn-primary btn-full mt-2" style="justify-content:center" onclick="loginClient()">Se connecter →</button>
+        </div>
+        <div id="client-register-form" class="hidden">
+          <div class="form-group"><label class="form-label">Nom complet</label><input type="text" id="cr-name" placeholder="Prénom Nom"></div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" id="cr-email" placeholder="votre@email.com"></div>
+          <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" id="cr-password" placeholder="Min. 6 caractères"></div>
+          <button class="btn btn-primary btn-full mt-2" style="justify-content:center" onclick="registerClient()">Créer mon compte →</button>
+        </div>
+        <p class="text-sm text-muted text-center mt-2" style="cursor:pointer;text-decoration:underline" onclick="enterClientCatalogAsGuest()">Continuer sans compte →</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN SCREEN ==================== -->
+<div id="screen-admin" class="hidden">
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <h1>ÉLARA</h1>
+      <p>Administration</p>
+    </div>
+    <div class="sidebar-user" id="sidebar-user-info">
+      <div class="sidebar-avatar" id="sidebar-avatar">A</div>
+      <div class="sidebar-user-info">
+        <p id="sidebar-name">Admin</p>
+        <span>Administrateur</span>
+      </div>
+    </div>
+    <div class="sidebar-nav" style="padding:16px 0;flex:1">
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" onclick="adminNav('dashboard',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Tableau de bord
+      </div>
+      <div class="nav-item" onclick="adminNav('caisse',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Caisse / Vente
+      </div>
+      <div class="nav-section">Gestion</div>
+      <div class="nav-item" onclick="adminNav('produits',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Produits & Stock
+      </div>
+      <div class="nav-item" onclick="adminNav('clients',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Clients
+      </div>
+      <div class="nav-item" onclick="adminNav('commandes',this)" id="nav-commandes">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Commandes Clients
+        <span class="nav-badge hidden" id="orders-badge">0</span>
+      </div>
+      <div class="nav-section">Analyse</div>
+      <div class="nav-item" onclick="adminNav('ventes',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Historique Ventes
+      </div>
+      <div class="nav-item" onclick="adminNav('dettes',this)" id="nav-dettes">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Dettes & Créances
+        <span class="nav-badge hidden" id="dettes-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="adminNav('rapports',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Rapports
+      </div>
+    </div>
+    <div class="sidebar-bottom">
+      <button class="btn btn-ghost" style="color:rgba(255,255,255,0.5);width:100%" onclick="switchToClientView()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Vue Client (tablette)
+      </button>
+      <button class="btn btn-ghost" style="color:rgba(255,255,255,0.4);width:100%;margin-top:4px" onclick="doLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Déconnexion
+      </button>
+      <p class="text-xs text-muted mt-2" id="demo-mode-label">Mode Démo</p>
+    </div>
+  </nav>
+  <div class="admin-main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Tableau de bord</div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="today-date"></span>
+        <span class="demo-badge" id="topbar-mode-badge">MODE DÉMO</span>
+      </div>
+    </div>
+    <div class="content" id="admin-content">
+      <div class="loading"><div class="spinner"></div><p class="text-muted">Chargement...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CLIENT SCREEN ==================== -->
+<div id="screen-client" class="hidden">
+  <div class="client-header">
+    <div class="client-brand">CHIC & GLAM</div>
+    <div class="client-header-right">
+      <button class="client-icon-btn" onclick="openClientAccount()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="client-account-label">Mon compte</span>
+      </button>
+      <button class="client-icon-btn" onclick="toggleClientCart()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Panier
+        <span class="cart-count hidden" id="client-cart-count">0</span>
+      </button>
+      <button class="client-icon-btn" onclick="backToAdmin()" id="back-to-admin-btn" style="display:none">
+        ← Admin
+      </button>
+    </div>
+  </div>
+  <div class="client-cat-strip">
+    <div id="client-cat-tabs"></div>
+    <div class="client-search-bar" style="margin-left:auto">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(240,234,214,0.4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input placeholder="Rechercher..." id="client-search" oninput="renderClientCatalog()">
+    </div>
+  </div>
+  <div class="client-catalog" id="client-catalog"></div>
+
+  <!-- Cart Overlay -->
+  <div class="client-cart-overlay" id="cart-overlay" onclick="toggleClientCart()"></div>
+  <!-- Cart Panel -->
+  <div class="client-cart-panel" id="client-cart-panel">
+    <div class="client-cart-header">
+      <span class="client-cart-title">Mon Panier</span>
+      <button class="client-cart-close" onclick="toggleClientCart()">×</button>
+    </div>
+    <div class="client-cart-items" id="client-cart-items"></div>
+    <div class="client-cart-footer" id="client-cart-footer"></div>
+  </div>
+</div>
+
+<!-- Modal Root -->
+<div id="modal-root"></div>
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ============================================================
+//  ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗
+// ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝
+// ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+// ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+// ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+//  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+// ============================================================
+
+// ==================== ⚙️ CONFIGURATION ====================
+// 1. Remplacez ces valeurs par vos informations Firebase
+// 2. Créez un projet sur https://console.firebase.google.com
+// 3. Activez Authentication (email/password), Firestore et Storage
+
+const ADMIN_EMAIL = 'admin@elara.com'; // Email de l'administrateur
+
+const firebaseConfig = {
+  apiKey: "VOTRE_API_KEY",
+  authDomain: "VOTRE_PROJECT_ID.firebaseapp.com",
+  projectId: "VOTRE_PROJECT_ID",
+  storageBucket: "VOTRE_PROJECT_ID.appspot.com",
+  messagingSenderId: "VOTRE_SENDER_ID",
+  appId: "VOTRE_APP_ID"
+};
+
+// ============================================================
+
+const DEMO_MODE = firebaseConfig.apiKey === "VOTRE_API_KEY";
+let db, auth, storage, unsubscribers = [];
+
+// ==================== STATE ====================
+const S = {
+  user: null, role: null, currentPage: 'dashboard',
+  products: [], clients: [], orders: [], ventes: [], dettes: [],
+  adminCart: [], clientCart: [], clientCat: 'Tous', clientUser: null,
+  filterCat: 'Tous', posSearch: '', prodSearch: '', clientSearch: '', detteSearch: '',
+  orderFilter: 'pending', venteFilter: 'all', pendingCount: 0, fromAdmin: false, detteFilter: 'all'
+};
+
+// ==================== DEMO DATA ====================
+const DEMO_PRODUCTS = [
+  {id:'p1',name:'Robe Florale Midi',cat:'Robes',prix:18500,stock:12,seuil:4,ref:'ROB-001',emoji:'👗',imageUrl:'',desc:'Robe légère imprimée fleurs'},
+  {id:'p2',name:'Robe Cocktail Noire',cat:'Robes',prix:24000,stock:8,seuil:3,ref:'ROB-002',emoji:'👗',imageUrl:'',desc:'Élégante robe de soirée'},
+  {id:'p3',name:'Pantalon Tailleur',cat:'Pantalons',prix:14500,stock:18,seuil:5,ref:'PAN-001',emoji:'👖',imageUrl:'',desc:'Pantalon droit professionnel'},
+  {id:'p4',name:'Jean Slim Premium',cat:'Pantalons',prix:12000,stock:3,seuil:5,ref:'PAN-002',emoji:'👖',imageUrl:'',desc:'Coupe slim stretch'},
+  {id:'p5',name:'Blazer Crème',cat:'Vestes',prix:32000,stock:6,seuil:3,ref:'VES-001',emoji:'🧥',imageUrl:'',desc:'Blazer structuré intemporel'},
+  {id:'p6',name:'Veste Tweed Chanel',cat:'Vestes',prix:45000,stock:4,seuil:2,ref:'VES-002',emoji:'🧥',imageUrl:'',desc:'Tweed haute couture'},
+  {id:'p7',name:'Top Soie Imprimé',cat:'Hauts',prix:8500,stock:22,seuil:6,ref:'HAU-001',emoji:'👕',imageUrl:'',desc:'Top en soie fluide'},
+  {id:'p8',name:'Chemisier Fluide',cat:'Hauts',prix:9200,stock:15,seuil:5,ref:'HAU-002',emoji:'👚',imageUrl:'',desc:'Chemisier voile léger'},
+  {id:'p9',name:'Foulard Soie',cat:'Accessoires',prix:7500,stock:10,seuil:4,ref:'ACC-001',emoji:'🧣',imageUrl:'',desc:'Foulard 100% soie'},
+  {id:'p10',name:'Ceinture Cuir Dorée',cat:'Accessoires',prix:5500,stock:0,seuil:3,ref:'ACC-002',emoji:'👜',imageUrl:'',desc:'Ceinture cuir avec boucle or'},
+  {id:'p11',name:'Jupe Plissée',cat:'Jupes',prix:11000,stock:9,seuil:3,ref:'JUP-001',emoji:'👗',imageUrl:'',desc:'Jupe plissée midi'},
+  {id:'p12',name:'Combinaison Lin',cat:'Robes',prix:16500,stock:5,seuil:2,ref:'COM-001',emoji:'👗',imageUrl:'',desc:'Combinaison lin naturel'},
+];
+const DEMO_CLIENTS = [
+  {id:'c1',nom:'Aminata Diallo',tel:'77 234 56 78',email:'aminata@gmail.com',totalAchats:5,montantTotal:87500,fidelite:'Gold'},
+  {id:'c2',nom:'Fatou Ndiaye',tel:'76 543 21 09',email:'fatou@gmail.com',totalAchats:3,montantTotal:42000,fidelite:'Silver'},
+  {id:'c3',nom:'Mariama Balde',tel:'70 987 65 43',email:'mariama@gmail.com',totalAchats:8,montantTotal:156000,fidelite:'Platinum'},
+  {id:'c4',nom:'Sophie Mendy',tel:'78 123 45 67',email:'sophie@gmail.com',totalAchats:2,montantTotal:28500,fidelite:'Standard'},
+  {id:'c5',nom:'Rokhaya Sarr',tel:'77 456 78 90',email:'rokhaya@gmail.com',totalAchats:6,montantTotal:98000,fidelite:'Gold'},
+  {id:'c6',nom:'Awa Touré',tel:'78 890 12 34',email:'awa@gmail.com',totalAchats:10,montantTotal:210000,fidelite:'Platinum'},
+];
+const DEMO_VENTES = [
+  {id:'v1',date:'2025-01-15',client:'Aminata Diallo',produits:'Robe Florale + Foulard',montant:26000,mode:'Espèces',statut:'Payé'},
+  {id:'v2',date:'2025-01-15',client:'Fatou Ndiaye',produits:'Pantalon Tailleur',montant:14500,mode:'Mobile Money',statut:'Payé'},
+  {id:'v3',date:'2025-01-14',client:'Mariama Balde',produits:'Blazer Crème',montant:32000,mode:'Carte bancaire',statut:'Payé'},
+  {id:'v4',date:'2025-01-13',client:'Sophie Mendy',produits:'Robe Cocktail',montant:24000,mode:'Mobile Money',statut:'Payé'},
+  {id:'v5',date:'2025-01-12',client:'Awa Touré',produits:'Veste Tweed Chanel',montant:45000,mode:'Carte bancaire',statut:'Payé'},
+  {id:'v6',date:'2025-01-11',client:'Rokhaya Sarr',produits:'Top Soie + Chemisier',montant:17700,mode:'Espèces',statut:'Payé'},
+  {id:'v7',date:'2025-01-10',client:'Client Anonyme',produits:'Jupe Plissée',montant:11000,mode:'Espèces',statut:'Payé'},
+];
+const DEMO_ORDERS = [
+  {id:'o1',clientName:'Mariama Balde',clientEmail:'mariama@gmail.com',items:[{productId:'p5',name:'Blazer Crème',prix:32000,qty:1,imageUrl:'',emoji:'🧥'},{productId:'p11',name:'Jupe Plissée',prix:11000,qty:1,imageUrl:'',emoji:'👗'}],total:43000,status:'pending',createdAt:new Date('2025-01-15T14:32:00')},
+  {id:'o2',clientName:'Fatou Ndiaye',clientEmail:'fatou@gmail.com',items:[{productId:'p1',name:'Robe Florale Midi',prix:18500,qty:2,imageUrl:'',emoji:'👗'}],total:37000,status:'pending',createdAt:new Date('2025-01-15T09:15:00')},
+  {id:'o3',clientName:'Sophie Mendy',clientEmail:'sophie@gmail.com',items:[{productId:'p7',name:'Top Soie Imprimé',prix:8500,qty:1,imageUrl:'',emoji:'👕'},{productId:'p9',name:'Foulard Soie',prix:7500,qty:1,imageUrl:'',emoji:'🧣'}],total:16000,status:'validated',createdAt:new Date('2025-01-14T16:00:00')},
+];
+const DEMO_DETTES = [
+  {id:'d1',client:'Fatou Ndiaye',clientId:'c2',venteId:'v2',produits:'Pantalon Tailleur',montantTotal:14500,montantPaye:5000,date:'2025-01-15',statut:'en_cours',paiements:[{date:'2025-01-15',montant:5000,note:'Acompte initial'}]},
+  {id:'d2',client:'Sophie Mendy',clientId:'c4',venteId:'v4',produits:'Robe Cocktail Noire',montantTotal:24000,montantPaye:24000,date:'2025-01-13',statut:'soldee',paiements:[{date:'2025-01-13',montant:10000,note:'Acompte'},{date:'2025-01-18',montant:14000,note:'Solde complet'}]},
+  {id:'d3',client:'Aminata Diallo',clientId:'c1',venteId:'',produits:'Foulard Soie + Top Soie',montantTotal:16000,montantPaye:8000,date:'2025-01-20',statut:'en_cours',paiements:[{date:'2025-01-20',montant:8000,note:'Moitié versée'}]},
+];
+
+// ==================== UTILS ====================
+function fCFA(n){return new Intl.NumberFormat('fr-SN').format(n)+' FCFA'}
+function todayStr(){return new Date().toLocaleDateString('fr-SN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+function initials(n){return (n||'?').split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase()}
+function uid(){return 'id_'+Date.now()+'_'+Math.random().toString(36).substr(2,5)}
+function stockBadge(p){
+  if(p.stock===0)return`<span class="badge badge-danger">Rupture</span>`;
+  if(p.stock<=p.seuil)return`<span class="badge badge-warn">Stock bas</span>`;
+  return`<span class="badge badge-success">En stock</span>`;
+}
+function fidBadge(f){
+  const m={Platinum:'badge-info',Gold:'badge-gold',Silver:'badge-neutral',Standard:'badge-neutral'};
+  return`<span class="badge ${m[f]||'badge-neutral'}">${f||'Standard'}</span>`;
+}
+function orderStatusBadge(s){
+  if(s==='pending')return`<span class="badge badge-pending">⏳ En attente</span>`;
+  if(s==='validated')return`<span class="badge badge-validated">✓ Validée</span>`;
+  if(s==='rejected')return`<span class="badge badge-rejected">✕ Refusée</span>`;
+  return`<span class="badge badge-neutral">${s}</span>`;
+}
+function timeAgo(date){
+  const d=date instanceof Date?date:(date&&date.toDate?date.toDate():new Date(date));
+  const diff=Math.floor((Date.now()-d.getTime())/60000);
+  if(diff<1)return'À l\'instant';if(diff<60)return`Il y a ${diff} min`;
+  if(diff<1440)return`Il y a ${Math.floor(diff/60)}h`;
+  return d.toLocaleDateString('fr-SN');
+}
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`show ${type==='error'?'error':type==='info'?'info':''}`;
+  setTimeout(()=>t.className='',3000);
+}
+function setScreen(id){
+  ['screen-auth','screen-admin','screen-client'].forEach(s=>document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+function productImgHtml(p,cls,style=''){
+  if(p.imageUrl)return`<img src="${p.imageUrl}" class="${cls}" style="${style}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`;
+  return'';
+}
+function closeModal(){const el=document.getElementById('modal-root');if(el)el.innerHTML=''}
+function openModal(html){document.getElementById('modal-root').innerHTML=html}
+
+// ==================== FIREBASE / DEMO INIT ====================
+function initApp(){
+  if(!DEMO_MODE){
+    try{
+      if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+      db=firebase.firestore();auth=firebase.auth();storage=firebase.storage();
+      document.getElementById('demo-banner').classList.add('hidden');
+      document.getElementById('topbar-mode-badge').textContent='FIREBASE';
+      document.getElementById('topbar-mode-badge').style.background='rgba(58,122,90,0.15)';
+      document.getElementById('topbar-mode-badge').style.color='var(--success)';
+      document.getElementById('demo-mode-label').textContent='Firebase connecté';
+      auth.onAuthStateChanged(handleAuthChange);
+    }catch(e){console.error('Firebase init error:',e);showToast('Erreur Firebase — Mode Démo activé','error')}
+  } else {
+    S.products=[...DEMO_PRODUCTS.map(p=>({...p}))];
+    S.clients=[...DEMO_CLIENTS.map(c=>({...c}))];
+    S.ventes=[...DEMO_VENTES.map(v=>({...v}))];
+    S.orders=[...DEMO_ORDERS.map(o=>({...o}))];
+    S.dettes=[...DEMO_DETTES.map(d=>({...d,paiements:[...d.paiements]}))];
+    updatePendingCount();
+    document.getElementById('today-date').textContent=todayStr();
+    setScreen('screen-auth');
+  }
+}
+
+function handleAuthChange(user){
+  if(user){
+    S.user=user;
+    db.collection('users').doc(user.uid).get().then(doc=>{
+      const data=doc.data()||{};
+      S.role=data.role||(user.email===ADMIN_EMAIL?'admin':'client');
+      if(S.role==='admin'){enterAdmin(user.displayName||user.email);}
+      else{S.clientUser={name:data.name||user.displayName||user.email,email:user.email,uid:user.uid};enterClientView();}
+    });
+  } else {
+    S.user=null;S.role=null;setScreen('screen-auth');
+  }
+}
+
+// ==================== AUTH FUNCTIONS ====================
+function switchMode(mode){
+  document.querySelectorAll('.auth-mode-tab').forEach((t,i)=>t.classList.toggle('active',i===(mode==='admin'?0:1)));
+  document.getElementById('form-admin').classList.toggle('hidden',mode!=='admin');
+  document.getElementById('form-client').classList.toggle('hidden',mode==='admin');
+}
+function switchClientTab(tab){
+  document.querySelectorAll('.auth-form-tab').forEach((t,i)=>t.classList.toggle('active',i===(tab==='login'?0:1)));
+  document.getElementById('client-login-form').classList.toggle('hidden',tab!=='login');
+  document.getElementById('client-register-form').classList.toggle('hidden',tab==='login');
+}
+
+async function loginAdmin(){
+  const email=document.getElementById('admin-email').value.trim();
+  const pass=document.getElementById('admin-password').value;
+  if(DEMO_MODE){
+    if(email===ADMIN_EMAIL&&pass==='admin123'){enterAdmin('Administrateur');}
+    else showToast('Email ou mot de passe incorrect','error');
+    return;
+  }
+  try{await auth.signInWithEmailAndPassword(email,pass);}
+  catch(e){showToast(e.message,'error');}
+}
+
+async function loginClient(){
+  const email=document.getElementById('cl-email').value.trim();
+  const pass=document.getElementById('cl-password').value;
+  if(DEMO_MODE){
+    if(!email){showToast('Entrez votre email','error');return;}
+    S.clientUser={name:email.split('@')[0],email,uid:'demo_'+Date.now()};
+    enterClientView();return;
+  }
+  try{await auth.signInWithEmailAndPassword(email,pass);}
+  catch(e){showToast(e.message,'error');}
+}
+
+async function registerClient(){
+  const name=document.getElementById('cr-name').value.trim();
+  const email=document.getElementById('cr-email').value.trim();
+  const pass=document.getElementById('cr-password').value;
+  if(!name||!email||!pass){showToast('Remplissez tous les champs','error');return;}
+  if(DEMO_MODE){
+    S.clientUser={name,email,uid:'demo_'+Date.now()};
+    S.clients.push({id:uid(),nom:name,tel:'',email,totalAchats:0,montantTotal:0,fidelite:'Standard'});
+    enterClientView();return;
+  }
+  try{
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    await cred.user.updateProfile({displayName:name});
+    await db.collection('users').doc(cred.user.uid).set({name,email,role:'client',fidelite:'Standard',totalAchats:0,montantTotal:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }catch(e){showToast(e.message,'error');}
+}
+
+function enterClientCatalogAsGuest(){S.clientUser=null;enterClientView();}
+
+async function doLogout(){
+  if(DEMO_MODE){S.user=null;S.role=null;S.clientUser=null;setScreen('screen-auth');}
+  else await auth.signOut();
+}
+
+// ==================== ENTER ADMIN ====================
+function enterAdmin(name){
+  S.role='admin';
+  document.getElementById('sidebar-avatar').textContent=initials(name);
+  document.getElementById('sidebar-name').textContent=name;
+  document.getElementById('today-date').textContent=todayStr();
+  setScreen('screen-admin');
+  if(!DEMO_MODE)setupFirestoreListeners();
+  updatePendingCount();
+  adminNav('dashboard',document.querySelector('.nav-item'));
+}
+
+// ==================== FIREBASE LISTENERS ====================
+function setupFirestoreListeners(){
+  unsubscribers.forEach(u=>u());unsubscribers=[];
+  unsubscribers.push(db.collection('products').onSnapshot(snap=>{
+    S.products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(S.currentPage==='produits'||S.currentPage==='caisse')renderAdminPage();
+  }));
+  unsubscribers.push(db.collection('orders').orderBy('createdAt','desc').onSnapshot(snap=>{
+    S.orders=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updatePendingCount();
+    if(S.currentPage==='commandes')renderAdminPage();
+  }));
+  unsubscribers.push(db.collection('clients').onSnapshot(snap=>{
+    S.clients=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(S.currentPage==='clients')renderAdminPage();
+  }));
+  unsubscribers.push(db.collection('ventes').orderBy('date','desc').onSnapshot(snap=>{
+    S.ventes=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(S.currentPage==='ventes')renderAdminPage();
+  }));
+}
+
+function updatePendingCount(){
+  const cnt=S.orders.filter(o=>o.status==='pending').length;
+  S.pendingCount=cnt;
+  const badge=document.getElementById('orders-badge');
+  if(badge){badge.textContent=cnt;badge.classList.toggle('hidden',cnt===0);}
+  const dettesCnt=S.dettes.filter(d=>d.statut==='en_cours').length;
+  const dettesBadge=document.getElementById('dettes-badge');
+  if(dettesBadge){dettesBadge.textContent=dettesCnt;dettesBadge.classList.toggle('hidden',dettesCnt===0);}
+}
+
+// ==================== PRODUCT CRUD ====================
+async function saveProduct(id,data,imageFile){
+  let imageUrl=data.imageUrl||'';
+  if(imageFile){
+    if(DEMO_MODE){
+      imageUrl=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(imageFile);});
+    } else {
+      const ref=storage.ref(`products/${id||uid()}/${imageFile.name}`);
+      const uploadTask=await ref.put(imageFile);
+      imageUrl=await uploadTask.ref.getDownloadURL();
+    }
+  }
+  const productData={...data,imageUrl};
+  if(DEMO_MODE){
+    if(id){const idx=S.products.findIndex(p=>p.id===id);if(idx>=0)S.products[idx]={...S.products[idx],...productData};}
+    else S.products.push({id:uid(),...productData});
+    renderAdminPage();
+  } else {
+    if(id)await db.collection('products').doc(id).update(productData);
+    else await db.collection('products').add({...productData,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  showToast(id?'Produit modifié !':'Produit ajouté !');
+}
+
+async function deleteProduct(id){
+  if(!confirm('Supprimer ce produit définitivement ?'))return;
+  if(DEMO_MODE){S.products=S.products.filter(p=>p.id!==id);renderAdminPage();}
+  else await db.collection('products').doc(id).delete();
+  showToast('Produit supprimé');
+}
+
+async function updateStock(id,qty,type){
+  const p=S.products.find(x=>x.id===id);if(!p)return;
+  let newStock=p.stock;
+  if(type==='add')newStock+=qty;
+  else if(type==='remove')newStock=Math.max(0,p.stock-qty);
+  else newStock=qty;
+  if(DEMO_MODE){p.stock=newStock;renderAdminPage();}
+  else await db.collection('products').doc(id).update({stock:newStock});
+  showToast(`Stock mis à jour: ${newStock} unités`);
+}
+
+// ==================== ORDERS ====================
+async function placeClientOrder(){
+  if(S.clientCart.length===0){showToast('Panier vide !','error');return;}
+  const total=S.clientCart.reduce((s,i)=>s+i.prix*i.qty,0);
+  const clientName=S.clientUser?S.clientUser.name:'Client Anonyme';
+  const clientEmail=S.clientUser?S.clientUser.email:'';
+  const orderData={
+    clientId:S.clientUser?S.clientUser.uid:'guest',
+    clientName,clientEmail,
+    items:S.clientCart.map(i=>({productId:i.id,name:i.name,prix:i.prix,qty:i.qty,imageUrl:i.imageUrl||'',emoji:i.emoji||'👗'})),
+    total,status:'pending',
+    createdAt:new Date()
+  };
+  if(DEMO_MODE){
+    S.orders.unshift({id:uid(),...orderData});
+    updatePendingCount();
+  } else {
+    await db.collection('orders').add({...orderData,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  S.clientCart=[];
+  renderClientCart();updateClientCartCount();
+  openModal(`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="client-modal" onclick="event.stopPropagation()">
+      <div class="client-modal-body" style="text-align:center;padding:40px 30px">
+        <div style="font-size:56px;margin-bottom:16px">✅</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#F0EAD6;margin-bottom:10px">Commande envoyée !</div>
+        <p style="color:rgba(240,234,214,0.5);font-size:14px;line-height:1.6">Votre sélection a été transmise à notre équipe.<br>Nous la validerons dans quelques instants.</p>
+        <button class="client-btn-gold" style="margin-top:24px;width:200px" onclick="closeModal()">Continuer les achats</button>
+      </div>
+    </div>
+  </div>`);
+  showToast('Commande transmise avec succès !');
+}
+
+async function validateOrder(id){
+  const order=S.orders.find(o=>o.id===id);if(!order)return;
+  if(DEMO_MODE){
+    order.status='validated';
+    // Add to ventes
+    S.ventes.unshift({id:uid(),date:new Date().toISOString().split('T')[0],client:order.clientName,produits:order.items.map(i=>i.name+(i.qty>1?' x'+i.qty:'')).join(', '),montant:order.total,mode:'Commande client',statut:'Payé'});
+    // Update stock
+    order.items.forEach(item=>{const p=S.products.find(x=>x.id===item.productId);if(p)p.stock=Math.max(0,p.stock-item.qty);});
+    updatePendingCount();renderAdminPage();
+  } else {
+    const batch=db.batch();
+    batch.update(db.collection('orders').doc(id),{status:'validated'});
+    order.items.forEach(item=>{batch.update(db.collection('products').doc(item.productId),{stock:firebase.firestore.FieldValue.increment(-item.qty)});});
+    await batch.commit();
+    await db.collection('ventes').add({date:new Date().toISOString().split('T')[0],client:order.clientName,produits:order.items.map(i=>i.name).join(', '),montant:order.total,mode:'Commande client',statut:'Payé',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  showToast('Commande validée !');
+}
+
+async function rejectOrder(id){
+  if(!confirm('Refuser cette commande ?'))return;
+  if(DEMO_MODE){const o=S.orders.find(x=>x.id===id);if(o)o.status='rejected';updatePendingCount();renderAdminPage();}
+  else await db.collection('orders').doc(id).update({status:'rejected'});
+  showToast('Commande refusée','info');
+}
+
+// ==================== ADMIN NAVIGATION ====================
+function adminNav(page,el){
+  S.currentPage=page;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={dashboard:'Tableau de bord',caisse:'Caisse — Point de Vente',produits:'Produits & Stock',clients:'Gestion Clients',commandes:'Commandes Clients',ventes:'Historique des Ventes',dettes:'Dettes & Créances',rapports:'Rapports & Statistiques'};
+  document.getElementById('page-title').textContent=titles[page]||page;
+  renderAdminPage();
+}
+
+function renderAdminPage(){
+  const el=document.getElementById('admin-content');
+  if(!el)return;
+  if(S.currentPage==='dashboard')el.innerHTML=renderDashboard();
+  else if(S.currentPage==='caisse')el.innerHTML=renderCaisse();
+  else if(S.currentPage==='produits')el.innerHTML=renderProduits();
+  else if(S.currentPage==='clients')el.innerHTML=renderClients();
+  else if(S.currentPage==='commandes')el.innerHTML=renderCommandes();
+  else if(S.currentPage==='ventes')el.innerHTML=renderVentes();
+  else if(S.currentPage==='dettes')el.innerHTML=renderDettes();
+  else if(S.currentPage==='rapports'){el.innerHTML=renderRapports();renderCharts();}
+}
+
+// ==================== DASHBOARD ====================
+function renderDashboard(){
+  const totalJour=S.ventes.filter(v=>v.date===new Date().toISOString().split('T')[0]).reduce((s,v)=>s+v.montant,0)||40500;
+  const totalMois=S.ventes.filter(v=>v.statut!=='Annulé').reduce((s,v)=>s+v.montant,0);
+  const stockBas=S.products.filter(p=>p.stock<=p.seuil).length;
+  const totalDu=S.dettes.filter(d=>d.statut==='en_cours').reduce((s,d)=>s+(d.montantTotal-d.montantPaye),0);
+  const chartData=[{l:'Lun',v:42000},{l:'Mar',v:68000},{l:'Mer',v:35000},{l:'Jeu',v:89000},{l:'Ven',v:76000},{l:'Sam',v:115000},{l:'Dim',v:54000}];
+  const maxV=Math.max(...chartData.map(d=>d.v));
+  return`
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-label">Ventes du jour</div><div class="kpi-value">${fCFA(totalJour)}</div><div class="kpi-sub">↑ +12% vs hier</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📅</div><div class="kpi-label">Chiffre mensuel</div><div class="kpi-value">${fCFA(totalMois)}</div><div class="kpi-sub">↑ +8% vs mois précédent</div></div>
+    <div class="kpi-card" style="cursor:pointer;border-left-color:var(--danger)" onclick="adminNav('dettes',null)"><div class="kpi-icon">💸</div><div class="kpi-label">Dettes en cours</div><div class="kpi-value" style="color:var(--danger)">${fCFA(totalDu)}</div><div class="kpi-sub down">${S.dettes.filter(d=>d.statut==='en_cours').length} client(s)</div></div>
+    <div class="kpi-card" style="cursor:pointer" onclick="adminNav('produits',null)"><div class="kpi-icon">⚠️</div><div class="kpi-label">Alertes stock</div><div class="kpi-value">${stockBas}</div><div class="kpi-sub ${stockBas>2?'down':''}">Produits sous seuil</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Ventes de la semaine</span></div>
+      <div class="card-body">
+        <div class="chart-bar-wrap">
+          ${chartData.map(d=>`<div class="chart-bar-col"><span class="chart-bar-val">${(d.v/1000).toFixed(0)}k</span><div class="chart-bar" style="height:${Math.round((d.v/maxV)*120)}px"></div><span class="chart-bar-label">${d.l}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Alertes Stock</span></div>
+      <table><thead><tr><th>Produit</th><th>Stock</th><th>État</th></tr></thead><tbody>
+        ${S.products.filter(p=>p.stock<=p.seuil).map(p=>`<tr><td class="fw-5">${p.emoji} ${p.name}</td><td style="color:${p.stock===0?'var(--danger)':'#B07020'};font-weight:600">${p.stock}</td><td>${stockBadge(p)}</td></tr>`).join('')||'<tr><td colspan="3" class="text-center text-muted" style="padding:20px">Aucune alerte ✓</td></tr>'}
+      </tbody></table>
+    </div>
+  </div>
+  <div class="card mt-4">
+    <div class="card-header"><span class="card-title">Dernières Ventes</span></div>
+    <table><thead><tr><th>Client</th><th>Produits</th><th>Montant</th><th>Mode</th></tr></thead><tbody>
+      ${S.ventes.slice(0,6).map(v=>`<tr><td class="fw-5">${v.client}</td><td class="text-muted text-sm">${v.produits}</td><td class="fw-5" style="color:var(--green)">${fCFA(v.montant)}</td><td><span class="badge badge-info">${v.mode}</span></td></tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+// ==================== CAISSE ====================
+function renderCaisse(){
+  const cats=['Tous',...new Set(S.products.map(p=>p.cat))];
+  const filtered=S.products.filter(p=>{
+    const c=S.filterCat==='Tous'||p.cat===S.filterCat;
+    const s=!S.posSearch||p.name.toLowerCase().includes(S.posSearch.toLowerCase());
+    return c&&s;
+  });
+  const subtotal=S.adminCart.reduce((s,i)=>s+i.prix*i.qty,0);
+  return`
+  <div class="pos-layout">
+    <div>
+      <div class="flex justify-between items-center mb-3">
+        <div class="cat-tabs">${cats.map(c=>`<div class="cat-tab ${S.filterCat===c?'active':''}" onclick="S.filterCat='${c}';renderAdminPage()">${c}</div>`).join('')}</div>
+        <div class="search-bar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input placeholder="Rechercher..." oninput="S.posSearch=this.value;renderAdminPage()" value="${S.posSearch}"></div>
+      </div>
+      <div class="product-grid-admin">
+        ${filtered.map(p=>`
+          <div class="product-tile" onclick="${p.stock>0?`adminAddToCart('${p.id}')`:''}" style="${p.stock===0?'opacity:.6;cursor:not-allowed':''}">
+            ${p.imageUrl?`<img src="${p.imageUrl}" class="product-tile-img">`:``}
+            <div class="${p.imageUrl?'hidden':'product-tile-placeholder'}">${p.emoji}</div>
+            <div class="product-tile-name">${p.name}</div>
+            <div class="product-tile-price">${fCFA(p.prix)}</div>
+            <div class="product-tile-stock">${p.stock===0?'Rupture':p.stock+' en stock'}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="cart-panel">
+      <div class="card-header"><span class="card-title">🛒 Panier</span><button class="btn btn-ghost btn-sm" onclick="S.adminCart=[];renderAdminPage()">Vider</button></div>
+      <div id="admin-cart-items">
+        ${S.adminCart.length===0?`<div class="empty-state"><div class="emoji">🛍️</div><p>Panier vide<br>Cliquez sur un produit</p></div>`:
+        S.adminCart.map(i=>`
+          <div class="cart-item">
+            <div style="flex:1"><div class="cart-item-name">${i.name}</div><div class="text-xs text-muted">${fCFA(i.prix)}</div></div>
+            <div class="flex items-center gap-2">
+              <button class="qty-btn" onclick="adminChangeQty('${i.id}',-1)">−</button>
+              <span style="font-weight:600;min-width:18px;text-align:center">${i.qty}</span>
+              <button class="qty-btn" onclick="adminChangeQty('${i.id}',1)">+</button>
+            </div>
+            <div class="text-right" style="min-width:80px"><div class="fw-6 text-sm">${fCFA(i.prix*i.qty)}</div></div>
+          </div>`).join('')}
+      </div>
+      ${S.adminCart.length>0?`
+      <div style="padding:14px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);padding:4px 0"><span>Sous-total</span><span>${fCFA(subtotal)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;align-items:center"><span>Remise %</span><input id="remise" type="number" min="0" max="100" value="0" style="width:60px;padding:4px;text-align:right" onchange="renderAdminPage()"></div>
+        <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:600;color:var(--text);border-top:1px solid var(--border);margin-top:6px;padding-top:10px"><span>TOTAL</span><span style="color:var(--green)">${fCFA(subtotal)}</span></div>
+        <div style="margin-top:12px">
+          <select id="cart-client" style="margin-bottom:8px"><option value="">— Client anonyme —</option>${S.clients.map(c=>`<option value="${c.id}">${c.nom}</option>`).join('')}</select>
+          <select id="cart-mode" style="margin-bottom:8px"><option>Espèces</option><option>Mobile Money</option><option>Carte bancaire</option><option>Virement</option></select>
+          <div style="margin-bottom:8px">
+            <label style="font-size:11px;font-weight:500;color:var(--text2);display:block;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase">Montant versé (FCFA)</label>
+            <input id="cart-verse" type="number" min="0" max="${subtotal}" value="${subtotal}" style="width:100%;padding:8px 10px;border:1px solid var(--border2);border-radius:6px;font-size:14px" onchange="renderAdminPage()" oninput="renderAdminPage()">
+            <div id="cart-reste-info" style="margin-top:4px;font-size:12px;color:var(--text3)">
+              ${(()=>{const v=0;const r=subtotal-v;return r>0?`<span style="color:var(--danger)">Reste à payer: ${fCFA(r)}</span>`:`<span style="color:var(--success)">✓ Paiement complet</span>`;})()}
+            </div>
+          </div>
+          <button class="btn btn-gold btn-full mt-2" style="margin-top:12px;justify-content:center;padding:12px" onclick="processAdminSale()">💳 Valider la vente — ${fCFA(subtotal)}</button>
+        </div>
+      </div>`:''}
+    </div>
+  </div>`;
+}
+
+function adminAddToCart(id){
+  const p=S.products.find(x=>x.id===id);if(!p||p.stock===0)return;
+  const ex=S.adminCart.find(x=>x.id===id);
+  if(ex){if(ex.qty<p.stock)ex.qty++;else{showToast('Stock maximum !','error');return;}}
+  else S.adminCart.push({id:p.id,name:p.name,prix:p.prix,qty:1,emoji:p.emoji,imageUrl:p.imageUrl});
+  renderAdminPage();
+}
+function adminChangeQty(id,d){
+  const item=S.adminCart.find(x=>x.id===id);if(!item)return;
+  item.qty+=d;if(item.qty<=0)S.adminCart=S.adminCart.filter(x=>x.id!==id);
+  renderAdminPage();
+}
+async function processAdminSale(){
+  if(S.adminCart.length===0)return;
+  const remise=parseInt(document.getElementById('remise')?.value||0);
+  const subtotal=S.adminCart.reduce((s,i)=>s+i.prix*i.qty,0);
+  const total=Math.round(subtotal*(1-remise/100));
+  const clientId=document.getElementById('cart-client')?.value;
+  const client=S.clients.find(c=>c.id===clientId);
+  const mode=document.getElementById('cart-mode')?.value||'Espèces';
+  const montantVerse=parseInt(document.getElementById('cart-verse')?.value||total);
+  const resteAPayer=Math.max(0,total-montantVerse);
+  const hasDebt=resteAPayer>0;
+  const statut=hasDebt?'Crédit':'Payé';
+
+  const venteData={date:new Date().toISOString().split('T')[0],client:client?client.nom:'Client Anonyme',produits:S.adminCart.map(i=>i.name+(i.qty>1?' x'+i.qty:'')).join(', '),montant:total,montantVerse,resteAPayer,mode,statut};
+  if(DEMO_MODE){
+    S.adminCart.forEach(item=>{const p=S.products.find(x=>x.id===item.id);if(p)p.stock=Math.max(0,p.stock-item.qty);});
+    if(client){client.totalAchats++;client.montantTotal+=montantVerse;}
+    const newVente={id:uid(),...venteData};
+    S.ventes.unshift(newVente);
+    if(hasDebt){
+      const dette={id:uid(),client:client?client.nom:'Client Anonyme',clientId:clientId||'',venteId:newVente.id,produits:venteData.produits,montantTotal:total,montantPaye:montantVerse,date:venteData.date,statut:'en_cours',paiements:[{date:venteData.date,montant:montantVerse,note:'Acompte initial — '+mode}]};
+      S.dettes.unshift(dette);
+      updatePendingCount();
+    }
+  } else {
+    const batch=db.batch();
+    S.adminCart.forEach(item=>{batch.update(db.collection('products').doc(item.id),{stock:firebase.firestore.FieldValue.increment(-item.qty)});});
+    await batch.commit();
+    const venteRef=await db.collection('ventes').add({...venteData,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    if(client){await db.collection('clients').doc(client.id).update({totalAchats:firebase.firestore.FieldValue.increment(1),montantTotal:firebase.firestore.FieldValue.increment(montantVerse)});}
+    if(hasDebt){await db.collection('dettes').add({client:client?client.nom:'Client Anonyme',clientId:clientId||'',venteId:venteRef.id,produits:venteData.produits,montantTotal:total,montantPaye:montantVerse,date:venteData.date,statut:'en_cours',paiements:[{date:venteData.date,montant:montantVerse,note:'Acompte — '+mode}],createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
+  }
+  if(hasDebt){showToast(`✓ Vente enregistrée — Reste à payer: ${fCFA(resteAPayer)}`, 'info');}
+  else{showToast(`✓ Vente soldée — ${fCFA(total)}`);}
+  S.adminCart=[];renderAdminPage();
+}
+
+// ==================== PRODUCTS ====================
+function renderProduits(){
+  const cats=['Tous',...new Set(S.products.map(p=>p.cat))];
+  const filtered=S.products.filter(p=>{
+    const c=S.filterCat==='Tous'||p.cat===S.filterCat;
+    const s=!S.prodSearch||p.name.toLowerCase().includes(S.prodSearch.toLowerCase())||p.ref.toLowerCase().includes(S.prodSearch.toLowerCase());
+    return c&&s;
+  });
+  return`
+  <div class="flex justify-between items-center mb-4">
+    <div class="cat-tabs">${cats.map(c=>`<div class="cat-tab ${S.filterCat===c?'active':''}" onclick="S.filterCat='${c}';renderAdminPage()">${c}</div>`).join('')}</div>
+    <div class="flex gap-3 items-center">
+      <div class="search-bar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input placeholder="Rechercher..." oninput="S.prodSearch=this.value;renderAdminPage()" value="${S.prodSearch}"></div>
+      <button class="btn btn-primary" onclick="openProductModal()">+ Nouveau produit</button>
+    </div>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Image</th><th>Réf.</th><th>Produit</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>État</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${filtered.map(p=>`
+          <tr>
+            <td style="width:52px">
+              ${p.imageUrl?`<img src="${p.imageUrl}" style="width:40px;height:50px;object-fit:cover;border-radius:4px">`:
+              `<div style="width:40px;height:50px;background:var(--bg2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px">${p.emoji}</div>`}
+            </td>
+            <td class="text-xs text-muted fw-5">${p.ref}</td>
+            <td><div><div class="fw-5">${p.name}</div><div class="text-xs text-muted">${p.desc||''}</div></div></td>
+            <td><span class="badge badge-neutral">${p.cat}</span></td>
+            <td class="fw-5" style="color:var(--green2)">${fCFA(p.prix)}</td>
+            <td><span style="font-weight:600;color:${p.stock===0?'var(--danger)':p.stock<=p.seuil?'#B07020':'var(--text)'}">${p.stock}</span> <span class="text-xs text-muted">/ seuil ${p.seuil}</span></td>
+            <td>${stockBadge(p)}</td>
+            <td>
+              <div class="flex gap-2">
+                <button class="btn btn-outline btn-sm" onclick="openProductModal('${p.id}')">✏️</button>
+                <button class="btn btn-outline btn-sm" onclick="openStockModal('${p.id}')">📦</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">✕</button>
+              </div>
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function openProductModal(id){
+  const p=id?S.products.find(x=>x.id===id):null;
+  const cats=['Robes','Pantalons','Vestes','Hauts','Jupes','Accessoires','Chaussures','Lingerie'];
+  openModal(`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <span class="modal-title">${p?'Modifier le produit':'Nouveau produit'}</span>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid-2">
+          <div>
+            <div class="form-group" style="margin-bottom:10px"><label class="form-label">Image du produit</label>
+              <div class="img-upload-zone ${p&&p.imageUrl?'has-image':''}" id="img-zone" onclick="document.getElementById('img-input').click()">
+                ${p&&p.imageUrl?`<img src="${p.imageUrl}" class="img-preview" id="img-preview-el">`:
+                `<div class="img-upload-placeholder" id="img-placeholder">
+                  <div style="font-size:32px;margin-bottom:8px">🖼️</div>
+                  <p class="text-sm text-muted">Cliquer pour ajouter une image</p>
+                  <p class="text-xs text-muted">JPG, PNG, WebP · Max 5MB</p>
+                </div>`}
+                <input type="file" id="img-input" accept="image/*" style="display:none" onchange="previewProductImage(this)">
+              </div>
+              <div class="upload-progress" id="upload-progress"><div class="upload-progress-bar" id="upload-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div>
+            <div class="form-group"><label class="form-label">Nom du produit</label><input id="p-name" value="${p?p.name:''}" placeholder="Ex: Robe Florale Midi"></div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">Référence</label><input id="p-ref" value="${p?p.ref:''}" placeholder="ROB-001"></div>
+              <div class="form-group"><label class="form-label">Emoji</label><input id="p-emoji" value="${p?p.emoji:'👗'}" placeholder="👗"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Catégorie</label>
+              <select id="p-cat">${cats.map(c=>`<option ${p&&p.cat===c?'selected':''}>${c}</option>`).join('')}</select>
+            </div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">Prix (FCFA)</label><input id="p-prix" type="number" value="${p?p.prix:''}" placeholder="15000"></div>
+              <div class="form-group"><label class="form-label">Stock actuel</label><input id="p-stock" type="number" value="${p?p.stock:0}" min="0"></div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">Seuil alerte</label><input id="p-seuil" type="number" value="${p?p.seuil:3}" min="0"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Description (visible clients)</label><textarea id="p-desc" rows="2" placeholder="Description du produit pour les clients...">${p?p.desc||'':''}</textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="submitProductForm('${id||''}')">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+function previewProductImage(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const zone=document.getElementById('img-zone');
+    zone.classList.add('has-image');
+    zone.innerHTML=`<img src="${e.target.result}" class="img-preview" id="img-preview-el"><input type="file" id="img-input" accept="image/*" style="display:none" onchange="previewProductImage(this)">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitProductForm(id){
+  const name=document.getElementById('p-name').value.trim();
+  const ref=document.getElementById('p-ref').value.trim();
+  const cat=document.getElementById('p-cat').value;
+  const prix=parseInt(document.getElementById('p-prix').value)||0;
+  const stock=parseInt(document.getElementById('p-stock').value)||0;
+  const seuil=parseInt(document.getElementById('p-seuil').value)||0;
+  const emoji=document.getElementById('p-emoji').value||'👗';
+  const desc=document.getElementById('p-desc').value.trim();
+  const imageFile=document.getElementById('img-input').files[0];
+  if(!name||!prix){showToast('Remplissez tous les champs !','error');return;}
+  const existing=id?S.products.find(x=>x.id===id):null;
+  const data={name,ref,cat,prix,stock,seuil,emoji,desc,imageUrl:existing?existing.imageUrl:''};
+  closeModal();
+  await saveProduct(id||null,data,imageFile);
+}
+
+function openStockModal(id){
+  const p=S.products.find(x=>x.id===id);
+  openModal(`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">📦 Mise à jour du stock</span><button class="close-btn" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <p class="text-muted text-sm mb-3">Produit: <strong>${p.emoji} ${p.name}</strong> — Stock actuel: <strong>${p.stock}</strong></p>
+        <div class="form-group"><label class="form-label">Type d'opération</label>
+          <select id="stock-type"><option value="add">Ajout (réapprovisionnement)</option><option value="remove">Retrait (ajustement inventaire)</option><option value="set">Définir valeur exacte</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Quantité</label><input id="stock-qty" type="number" value="10" min="0"></div>
+        <div class="form-group"><label class="form-label">Motif</label><input id="stock-motif" placeholder="Ex: Livraison fournisseur, Inventaire..."></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="submitStockUpdate('${id}')">Mettre à jour</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function submitStockUpdate(id){
+  const type=document.getElementById('stock-type').value;
+  const qty=parseInt(document.getElementById('stock-qty').value)||0;
+  closeModal();
+  await updateStock(id,qty,type);
+}
+
+// ==================== CLIENTS ====================
+function renderClients(){
+  const filtered=S.clients.filter(c=>!S.clientSearch||c.nom.toLowerCase().includes(S.clientSearch.toLowerCase())||c.tel.includes(S.clientSearch));
+  return`
+  <div class="flex justify-between items-center mb-4">
+    <div class="search-bar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input placeholder="Rechercher..." oninput="S.clientSearch=this.value;renderAdminPage()" value="${S.clientSearch}"></div>
+    <button class="btn btn-primary" onclick="openClientModal()">+ Nouveau client</button>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Client</th><th>Contact</th><th>Achats</th><th>Total dépensé</th><th>Fidélité</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${filtered.map(c=>`<tr>
+          <td><div class="flex items-center gap-3"><div class="avatar">${initials(c.nom)}</div><span class="fw-5">${c.nom}</span></div></td>
+          <td><div class="text-sm">${c.tel}</div><div class="text-xs text-muted">${c.email}</div></td>
+          <td class="text-center fw-5">${c.totalAchats}</td>
+          <td class="fw-5" style="color:var(--green2)">${fCFA(c.montantTotal)}</td>
+          <td>${fidBadge(c.fidelite)}</td>
+          <td><div class="flex gap-2"><button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteClientRecord('${c.id}')">✕</button></div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function openClientModal(id){
+  const c=id?S.clients.find(x=>x.id===id):null;
+  openModal(`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">${c?'Modifier Client':'Nouveau Client'}</span><button class="close-btn" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Nom complet</label><input id="c-nom" value="${c?c.nom:''}" placeholder="Prénom Nom"></div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">Téléphone</label><input id="c-tel" value="${c?c.tel:''}" placeholder="77 000 00 00"></div>
+          <div class="form-group"><label class="form-label">Email</label><input id="c-email" value="${c?c.email:''}" placeholder="email@example.com"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Programme fidélité</label>
+          <select id="c-fid">${['Standard','Silver','Gold','Platinum'].map(f=>`<option ${c&&c.fidelite===f?'selected':''}>${f}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="submitClientForm('${id||''}')">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function submitClientForm(id){
+  const nom=document.getElementById('c-nom').value.trim();
+  const tel=document.getElementById('c-tel').value.trim();
+  const email=document.getElementById('c-email').value.trim();
+  const fidelite=document.getElementById('c-fid').value;
+  if(!nom){showToast('Le nom est requis !','error');return;}
+  closeModal();
+  if(DEMO_MODE){
+    if(id){const c=S.clients.find(x=>x.id===id);Object.assign(c,{nom,tel,email,fidelite});}
+    else S.clients.push({id:uid(),nom,tel,email,totalAchats:0,montantTotal:0,fidelite});
+    renderAdminPage();
+  } else {
+    if(id)await db.collection('clients').doc(id).update({nom,tel,email,fidelite});
+    else await db.collection('clients').add({nom,tel,email,fidelite,totalAchats:0,montantTotal:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  showToast(id?'Client modifié !':'Client ajouté !');
+}
+
+async function deleteClientRecord(id){
+  if(!confirm('Supprimer ce client ?'))return;
+  if(DEMO_MODE){S.clients=S.clients.filter(c=>c.id!==id);renderAdminPage();}
+  else await db.collection('clients').doc(id).delete();
+  showToast('Client supprimé');
+}
+
+// ==================== COMMANDES ====================
+function renderCommandes(){
+  const filtered=S.orders.filter(o=>S.orderFilter==='all'||o.status===S.orderFilter);
+  return`
+  <div class="flex justify-between items-center mb-4">
+    <div class="order-filter-tabs">
+      ${[['pending','⏳ En attente'],['validated','✓ Validées'],['rejected','✕ Refusées'],['all','Toutes']].map(([v,l])=>`
+        <button class="order-filter-tab ${S.orderFilter===v?'active':''}" onclick="S.orderFilter='${v}';renderAdminPage()">${l}</button>`).join('')}
+    </div>
+    <span class="text-muted text-sm">${filtered.length} commande(s)</span>
+  </div>
+  ${filtered.length===0?`<div class="empty-state"><div class="emoji">${S.orderFilter==='pending'?'🎉':'📋'}</div><p>${S.orderFilter==='pending'?'Aucune commande en attente':'Aucune commande'}</p></div>`:
+  filtered.map(o=>`
+    <div class="order-card">
+      <div class="order-card-header">
+        <div class="flex items-center gap-3">
+          <div class="avatar" style="background:var(--green2)">${initials(o.clientName)}</div>
+          <div>
+            <div class="fw-6">${o.clientName}</div>
+            <div class="text-xs text-muted">${o.clientEmail||'Email non renseigné'} · ${timeAgo(o.createdAt)}</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          ${orderStatusBadge(o.status)}
+          <span class="fw-6" style="color:var(--green2);font-family:'Cormorant Garamond',serif;font-size:18px">${fCFA(o.total)}</span>
+        </div>
+      </div>
+      <div class="order-card-body">
+        <div style="margin-bottom:10px">
+          ${(o.items||[]).map(item=>`
+            <div class="order-item-row">
+              ${item.imageUrl?`<img src="${item.imageUrl}" class="order-item-img">`:
+              `<div class="order-item-placeholder">${item.emoji||'👗'}</div>`}
+              <div style="flex:1"><div class="fw-5 text-sm">${item.name}</div><div class="text-xs text-muted">Qté: ${item.qty}</div></div>
+              <div class="fw-5 text-sm" style="color:var(--green2)">${fCFA(item.prix*item.qty)}</div>
+            </div>`).join('')}
+        </div>
+        ${o.status==='pending'?`
+        <div class="flex gap-3 mt-2">
+          <button class="btn btn-primary" onclick="validateOrder('${o.id}')">✓ Valider la commande</button>
+          <button class="btn btn-danger" onclick="rejectOrder('${o.id}')">✕ Refuser</button>
+        </div>`:''}
+      </div>
+    </div>`).join('')}`;
+}
+
+// ==================== VENTES ====================
+function renderVentes(){
+  const ventes=S.ventes;
+  const totalCA=ventes.filter(v=>v.statut!=='Annulé').reduce((s,v)=>s+v.montant,0);
+  return`
+  <div class="flex justify-between items-center mb-4">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${[['all','Toutes'],['Payé','Payées'],['Crédit','En crédit'],['Annulé','Annulées']].map(([v,l])=>`
+        <div class="cat-tab ${(!S.venteFilter||S.venteFilter==='all'?v==='all':S.venteFilter===v)?'active':''}" onclick="S.venteFilter='${v}';renderAdminPage()">${l}</div>`).join('')}
+    </div>
+    <span class="text-muted text-sm">CA: <strong style="color:var(--green2)">${fCFA(totalCA)}</strong></span>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Historique des Ventes</span><span class="text-muted text-sm">${ventes.length} transactions</span></div>
+    <table><thead><tr><th>Date</th><th>Client</th><th>Produits</th><th>Total</th><th>Versé</th><th>Reste</th><th>Mode</th><th>Statut</th><th>Actions</th></tr></thead><tbody>
+      ${ventes.filter(v=>!S.venteFilter||S.venteFilter==='all'||v.statut===S.venteFilter).map(v=>`
+        <tr class="${v.statut==='Annulé'?'sale-cancelled':''}">
+          <td class="text-muted text-sm">${v.date}</td>
+          <td class="fw-5">${v.client}</td>
+          <td class="text-muted text-sm" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.produits}</td>
+          <td class="fw-5" style="color:var(--text)">${fCFA(v.montant)}</td>
+          <td class="fw-5" style="color:var(--success)">${fCFA(v.montantVerse||v.montant)}</td>
+          <td class="fw-5" style="color:${(v.resteAPayer||0)>0?'var(--danger)':'var(--text3)'}">${(v.resteAPayer||0)>0?fCFA(v.resteAPayer):'—'}</td>
+          <td><span class="badge badge-info">${v.mode}</span></td>
+          <td>${v.statut==='Payé'?`<span class="badge badge-success">✓ Payé</span>`:v.statut==='Crédit'?`<span class="badge badge-warn">⏳ Crédit</span>`:v.statut==='Annulé'?`<span class="badge badge-danger">✕ Annulé</span>`:`<span class="badge badge-neutral">${v.statut}</span>`}</td>
+          <td>
+            ${v.statut!=='Annulé'?`<button class="btn btn-danger btn-sm" onclick="annulerVente('${v.id}')" title="Annuler cette vente">✕</button>`:`<span style="font-size:11px;color:var(--text3)">—</span>`}
+          </td>
+        </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+async function annulerVente(id){
+  const v=S.ventes.find(x=>x.id===id);if(!v)return;
+  if(!confirm(`Annuler la vente de ${fCFA(v.montant)} pour ${v.client} ?\n\nLe stock sera remis à jour si possible.`))return;
+  if(DEMO_MODE){
+    v.statut='Annulé';
+    renderAdminPage();
+  } else {
+    await db.collection('ventes').doc(id).update({statut:'Annulé'});
+  }
+  showToast('Vente annulée','info');
+}
+
+// ==================== DETTES ====================
+function renderDettes(){
+  const filtered=S.dettes.filter(d=>{
+    if(S.detteFilter==='en_cours')return d.statut==='en_cours';
+    if(S.detteFilter==='soldee')return d.statut==='soldee';
+    if(S.detteSearch)return d.client.toLowerCase().includes(S.detteSearch.toLowerCase());
+    return true;
+  }).filter(d=>!S.detteSearch||d.client.toLowerCase().includes(S.detteSearch.toLowerCase()));
+  const totalDu=S.dettes.filter(d=>d.statut==='en_cours').reduce((s,d)=>s+(d.montantTotal-d.montantPaye),0);
+  return`
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+    <div class="kpi-card" style="border-left-color:var(--danger)">
+      <div class="kpi-icon">💸</div>
+      <div class="kpi-label">Total dû</div>
+      <div class="kpi-value" style="color:var(--danger)">${fCFA(totalDu)}</div>
+      <div class="kpi-sub down">${S.dettes.filter(d=>d.statut==='en_cours').length} client(s) en cours</div>
+    </div>
+    <div class="kpi-card" style="border-left-color:var(--success)">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-label">Dettes soldées</div>
+      <div class="kpi-value">${S.dettes.filter(d=>d.statut==='soldee').length}</div>
+      <div class="kpi-sub">Remboursées</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-label">Total créances</div>
+      <div class="kpi-value">${S.dettes.length}</div>
+      <div class="kpi-sub">Toutes transactions crédit</div>
+    </div>
+  </div>
+  <div class="flex justify-between items-center mb-4" style="gap:12px">
+    <div style="display:flex;gap:8px">
+      ${[['all','Toutes'],['en_cours','En cours'],['soldee','Soldées']].map(([v,l])=>`
+        <div class="cat-tab ${S.detteFilter===v?'active':''}" onclick="S.detteFilter='${v}';renderAdminPage()">${l}</div>`).join('')}
+    </div>
+    <div class="flex gap-3 items-center">
+      <div class="search-bar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input placeholder="Chercher un client..." oninput="S.detteSearch=this.value;renderAdminPage()" value="${S.detteSearch}"></div>
+      <button class="btn btn-primary" onclick="openNouvelleDetteModal()">+ Nouvelle créance</button>
+    </div>
+  </div>
+  ${filtered.length===0?`<div class="empty-state"><div class="emoji">🎉</div><p>Aucune dette ${S.detteFilter==='en_cours'?'en cours':S.detteFilter==='soldee'?'soldée':''}</p></div>`:
+  filtered.map(d=>{
+    const reste=d.montantTotal-d.montantPaye;
+    const pct=Math.round((d.montantPaye/d.montantTotal)*100);
+    return`
+    <div class="dette-card ${d.statut==='soldee'?'soldee':''}">
+      <div class="flex justify-between items-center mb-2">
+        <div class="flex items-center gap-3">
+          <div class="avatar" style="background:${d.statut==='soldee'?'var(--success)':'var(--gold2)'}">
+            ${initials(d.client)}
+          </div>
+          <div>
+            <div class="fw-6">${d.client}</div>
+            <div class="text-xs text-muted">${d.produits} · ${d.date}</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          ${d.statut==='soldee'?`<span class="badge badge-success">✓ Soldée</span>`:`<span class="badge badge-warn">⏳ En cours</span>`}
+          <div class="text-right">
+            <div class="fw-6" style="font-family:'Cormorant Garamond',serif;font-size:18px;color:${d.statut==='soldee'?'var(--success)':'var(--danger)'}">${d.statut==='soldee'?fCFA(d.montantTotal):fCFA(reste)}</div>
+            <div class="text-xs text-muted">${d.statut==='soldee'?'remboursé':'reste à payer'}</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-xs text-muted mb-1">
+          <span>Versé: <strong style="color:var(--text)">${fCFA(d.montantPaye)}</strong> / ${fCFA(d.montantTotal)}</span>
+          <span>${pct}%</span>
+        </div>
+        <div class="dette-progress-bar">
+          <div class="dette-progress-fill ${pct>=100?'full':''}" style="width:${pct}%"></div>
+        </div>
+      </div>
+      ${(d.paiements||[]).length>0?`
+      <div style="margin-top:10px">
+        <div class="text-xs fw-5 text-muted mb-1">Historique des versements</div>
+        ${d.paiements.map(p=>`
+          <div class="paiement-row">
+            <div class="flex items-center gap-2">
+              <span>💵</span>
+              <div>
+                <div class="fw-5">${fCFA(p.montant)}</div>
+                <div class="text-xs text-muted">${p.note||''}</div>
+              </div>
+            </div>
+            <div class="text-xs text-muted">${p.date}</div>
+          </div>`).join('')}
+      </div>`:''}
+      ${d.statut==='en_cours'?`
+      <div class="flex gap-2 mt-3">
+        <button class="btn btn-primary btn-sm" onclick="openVersementModal('${d.id}')">💵 Enregistrer un versement</button>
+        <button class="btn btn-gold btn-sm" onclick="solderDette('${d.id}')">✓ Solder en entier</button>
+        <button class="btn btn-danger btn-sm" onclick="supprimerDette('${d.id}')">✕ Supprimer</button>
+      </div>`:`<div class="flex gap-2 mt-2"><button class="btn btn-outline btn-sm" onclick="supprimerDette('${d.id}')">✕ Supprimer</button></div>`}
+    </div>`;
+  }).join('')}`;
+}
+
+function openNouvelleDetteModal(){
+  openModal(`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">💸 Nouvelle créance / dette</span><button class="close-btn" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Client</label>
+          <select id="nd-client"><option value="">— Sélectionner —</option>${S.clients.map(c=>`<option value="${c.id}">${c.nom}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label class="form-label">Articles / Description</label><input id="nd-produits" placeholder="Ex: Robe Florale + Foulard"></div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">Montant total (FCFA)</label><input id="nd-total" type="number" min="0" placeholder="25000"></div>
+          <div class="form-group"><label class="form-label">Montant versé (FCFA)</label><input id="nd-verse" type="number" min="0" placeholder="10000" value="0"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Note (optionnel)</label><input id="nd-note" placeholder="Ex: Acompte initial, Mobile Money..."></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="creerDette()">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+function creerDette(){
+  const clientId=document.getElementById('nd-client')?.value;
+  const client=S.clients.find(c=>c.id===clientId);
+  const produits=document.getElementById('nd-produits')?.value.trim();
+  const total=parseInt(document.getElementById('nd-total')?.value)||0;
+  const verse=parseInt(document.getElementById('nd-verse')?.value)||0;
+  const note=document.getElementById('nd-note')?.value.trim()||'Enregistrement manuel';
+  if(!produits||total<=0){showToast('Remplissez les champs requis','error');return;}
+  const today=new Date().toISOString().split('T')[0];
+  const dette={id:uid(),client:client?client.nom:'Client Anonyme',clientId:clientId||'',venteId:'',produits,montantTotal:total,montantPaye:verse,date:today,statut:verse>=total?'soldee':'en_cours',paiements:verse>0?[{date:today,montant:verse,note}]:[]};
+  if(DEMO_MODE){S.dettes.unshift(dette);updatePendingCount();renderAdminPage();}
+  closeModal();
+  showToast('Créance enregistrée !');
+}
+
+function openVersementModal(detteId){
+  const d=S.dettes.find(x=>x.id===detteId);if(!d)return;
+  const reste=d.montantTotal-d.montantPaye;
+  openModal(`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">💵 Enregistrer un versement</span><button class="close-btn" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <p class="text-muted text-sm mb-3">Client: <strong>${d.client}</strong> — Reste à payer: <strong style="color:var(--danger)">${fCFA(reste)}</strong></p>
+        <div class="form-group"><label class="form-label">Montant versé (FCFA)</label><input id="v-montant" type="number" min="1" max="${reste}" value="${reste}" placeholder="${reste}"></div>
+        <div class="form-group"><label class="form-label">Mode de paiement</label>
+          <select id="v-mode"><option>Espèces</option><option>Mobile Money</option><option>Carte bancaire</option><option>Virement</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Note (optionnel)</label><input id="v-note" placeholder="Ex: Versement partiel, Solde..."></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="enregistrerVersement('${detteId}')">✓ Enregistrer</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function enregistrerVersement(detteId){
+  const d=S.dettes.find(x=>x.id===detteId);if(!d)return;
+  const montant=parseInt(document.getElementById('v-montant')?.value)||0;
+  const mode=document.getElementById('v-mode')?.value||'Espèces';
+  const note=document.getElementById('v-note')?.value.trim()||mode;
+  if(montant<=0){showToast('Montant invalide','error');return;}
+  const today=new Date().toISOString().split('T')[0];
+  const reste=d.montantTotal-d.montantPaye;
+  const actualMontant=Math.min(montant,reste);
+  if(DEMO_MODE){
+    d.montantPaye+=actualMontant;
+    d.paiements.push({date:today,montant:actualMontant,note});
+    if(d.montantPaye>=d.montantTotal){d.statut='soldee';}
+    updatePendingCount();renderAdminPage();
+  }
+  closeModal();
+  if(d.montantPaye>=d.montantTotal)showToast('🎉 Dette soldée complètement !');
+  else showToast(`✓ Versement de ${fCFA(actualMontant)} enregistré`);
+}
+
+async function solderDette(detteId){
+  const d=S.dettes.find(x=>x.id===detteId);if(!d)return;
+  const reste=d.montantTotal-d.montantPaye;
+  if(!confirm(`Solder la dette de ${d.client} ?\nMontant restant: ${fCFA(reste)}`))return;
+  const today=new Date().toISOString().split('T')[0];
+  if(DEMO_MODE){
+    d.montantPaye=d.montantTotal;d.statut='soldee';
+    d.paiements.push({date:today,montant:reste,note:'Solde complet'});
+    updatePendingCount();renderAdminPage();
+  }
+  showToast('🎉 Dette soldée !');
+}
+
+async function supprimerDette(detteId){
+  if(!confirm('Supprimer cette créance définitivement ?'))return;
+  if(DEMO_MODE){S.dettes=S.dettes.filter(d=>d.id!==detteId);updatePendingCount();renderAdminPage();}
+  showToast('Créance supprimée','info');
+}
+
+// ==================== RAPPORTS ====================
+function renderRapports(){
+  const totalCA=S.ventes.reduce((s,v)=>s+v.montant,0);
+  const panier=S.ventes.length?Math.round(totalCA/S.ventes.length):0;
+  return`
+  <div class="rapport-summary">
+    <div class="rapport-card"><span class="val">${fCFA(totalCA)}</span><span class="lbl">Chiffre d'affaires total</span></div>
+    <div class="rapport-card"><span class="val">${fCFA(panier)}</span><span class="lbl">Panier moyen</span></div>
+    <div class="rapport-card"><span class="val">${S.clients.length}</span><span class="lbl">Clients actifs</span></div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><span class="card-title">CA par catégorie</span></div><div class="card-body"><canvas id="chart-cat" height="180"></canvas></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">Modes de paiement</span></div><div class="card-body"><canvas id="chart-mode" height="180"></canvas></div></div>
+  </div>
+  <div class="card mt-4">
+    <div class="card-header"><span class="card-title">Performance par catégorie</span></div>
+    <div class="card-body">
+      ${[{cat:'Vestes',ca:585000,pct:100},{cat:'Robes',ca:498000,pct:85},{cat:'Pantalons',ca:316500,pct:54},{cat:'Hauts',ca:178000,pct:30},{cat:'Accessoires',ca:143000,pct:24},{cat:'Jupes',ca:99000,pct:17}].map(r=>`
+        <div style="margin-bottom:16px">
+          <div class="flex justify-between mb-1"><span class="fw-5 text-sm">${r.cat}</span><span class="fw-5 text-sm" style="color:var(--green2)">${fCFA(r.ca)}</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${r.pct}%;background:var(--green)"></div></div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+function renderCharts(){
+  if(typeof Chart==='undefined')return;
+  const cc=document.getElementById('chart-cat');const mc=document.getElementById('chart-mode');
+  if(cc)new Chart(cc,{type:'bar',data:{labels:['Vestes','Robes','Pantalons','Hauts','Accessoires','Jupes'],datasets:[{data:[585000,498000,316500,178000,143000,99000],backgroundColor:'#1A3528',borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v/1000+'k'}}}}});
+  if(mc)new Chart(mc,{type:'doughnut',data:{labels:['Espèces','Mobile Money','Carte','Virement'],datasets:[{data:[45,30,20,5],backgroundColor:['#1A3528','#C9A84C','#2E6049','#E8C97A']}]},options:{plugins:{legend:{position:'bottom'}}}});
+}
+
+// ==================== CLIENT VIEW ====================
+function enterClientView(){
+  if(!DEMO_MODE){
+    db.collection('products').onSnapshot(snap=>{S.products=snap.docs.map(d=>({id:d.id,...d.data()}));renderClientCatalog();});
+  } else if(S.products.length===0){S.products=[...DEMO_PRODUCTS.map(p=>({...p}))];}
+  document.getElementById('client-account-label').textContent=S.clientUser?S.clientUser.name:'Mon compte';
+  const backBtn=document.getElementById('back-to-admin-btn');
+  if(S.fromAdmin&&backBtn)backBtn.style.display='flex';
+  setScreen('screen-client');
+  renderClientCats();
+  renderClientCatalog();
+  renderClientCart();
+}
+
+function renderClientCats(){
+  const cats=['Tous',...new Set(S.products.map(p=>p.cat))];
+  document.getElementById('client-cat-tabs').innerHTML=cats.map(c=>`<div class="client-cat-tab ${S.clientCat===c?'active':''}" onclick="setClientCat('${c}')">${c}</div>`).join('');
+}
+
+function setClientCat(c){S.clientCat=c;renderClientCats();renderClientCatalog();}
+
+function renderClientCatalog(){
+  const search=(document.getElementById('client-search')||{}).value||'';
+  const filtered=S.products.filter(p=>{
+    const c=S.clientCat==='Tous'||p.cat===S.clientCat;
+    const s=!search||p.name.toLowerCase().includes(search.toLowerCase());
+    return c&&s&&p.stock>0;
+  });
+  const el=document.getElementById('client-catalog');if(!el)return;
+  if(filtered.length===0){el.innerHTML=`<div class="client-empty"><div class="emoji">🔍</div><p>Aucun article disponible<br>dans cette catégorie</p></div>`;return;}
+  el.innerHTML=`<div class="client-product-grid">${filtered.map(p=>`
+    <div class="client-product-card">
+      <div class="client-product-img-wrap">
+        ${p.imageUrl?`<img src="${p.imageUrl}" class="client-product-img" alt="${p.name}">`:
+        `<div class="client-product-placeholder">${p.emoji}</div>`}
+      </div>
+      <div class="client-product-info">
+        <div class="client-product-cat">${p.cat}</div>
+        <div class="client-product-name">${p.name}</div>
+        ${p.desc?`<div style="font-size:12px;color:rgba(240,234,214,0.4);margin-bottom:8px;line-height:1.4">${p.desc}</div>`:''}
+        <div class="client-product-price">${fCFA(p.prix)}</div>
+        <button class="client-add-btn" onclick="clientAddToCart('${p.id}')">
+          + Ajouter au panier
+        </button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function clientAddToCart(id){
+  const p=S.products.find(x=>x.id===id);if(!p||p.stock===0)return;
+  const ex=S.clientCart.find(x=>x.id===id);
+  const cartQty=ex?ex.qty:0;
+  if(cartQty>=p.stock){showToast('Stock insuffisant !','error');return;}
+  if(ex)ex.qty++;
+  else S.clientCart.push({id:p.id,name:p.name,prix:p.prix,qty:1,emoji:p.emoji,imageUrl:p.imageUrl||''});
+  updateClientCartCount();
+  renderClientCart();
+  showToast(`${p.name} ajouté au panier`);
+}
+
+function updateClientCartCount(){
+  const cnt=S.clientCart.reduce((s,i)=>s+i.qty,0);
+  const el=document.getElementById('client-cart-count');
+  if(el){el.textContent=cnt;el.classList.toggle('hidden',cnt===0);}
+}
+
+function renderClientCart(){
+  const itemsEl=document.getElementById('client-cart-items');
+  const footerEl=document.getElementById('client-cart-footer');
+  if(!itemsEl||!footerEl)return;
+  if(S.clientCart.length===0){
+    itemsEl.innerHTML=`<div class="client-empty"><div class="emoji">🛍️</div><p>Votre panier est vide<br>Parcourez notre catalogue</p></div>`;
+    footerEl.innerHTML='';return;
+  }
+  itemsEl.innerHTML=S.clientCart.map(item=>`
+    <div class="client-cart-item">
+      ${item.imageUrl?`<img src="${item.imageUrl}" class="client-cart-item-img">`:
+      `<div class="client-cart-item-placeholder">${item.emoji}</div>`}
+      <div style="flex:1;min-width:0">
+        <div class="client-cart-item-name">${item.name}</div>
+        <div class="client-cart-item-price">${fCFA(item.prix*item.qty)}</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="client-qty-btn" onclick="clientChangeQty('${item.id}',-1)">−</button>
+        <span style="font-size:14px;font-weight:600;color:#F0EAD6;min-width:18px;text-align:center">${item.qty}</span>
+        <button class="client-qty-btn" onclick="clientChangeQty('${item.id}',1)">+</button>
+      </div>
+    </div>`).join('');
+  const total=S.clientCart.reduce((s,i)=>s+i.prix*i.qty,0);
+  footerEl.innerHTML=`
+    <div class="client-total-row"><span>Articles (${S.clientCart.reduce((s,i)=>s+i.qty,0)})</span><span>${fCFA(total)}</span></div>
+    <div class="client-total-row final"><span>Total</span><span>${fCFA(total)}</span></div>
+    <button class="client-order-btn" onclick="handleClientOrder()">Passer ma commande →</button>
+    <button style="width:100%;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;color:rgba(240,234,214,0.5);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:8px" onclick="S.clientCart=[];renderClientCart();updateClientCartCount()">Vider le panier</button>`;
+}
+
+function clientChangeQty(id,d){
+  const item=S.clientCart.find(x=>x.id===id);if(!item)return;
+  item.qty+=d;if(item.qty<=0)S.clientCart=S.clientCart.filter(x=>x.id!==id);
+  updateClientCartCount();renderClientCart();
+}
+
+function toggleClientCart(){
+  const panel=document.getElementById('client-cart-panel');
+  const overlay=document.getElementById('cart-overlay');
+  const open=panel.classList.toggle('open');
+  overlay.classList.toggle('open',open);
+}
+
+function handleClientOrder(){
+  if(!S.clientUser){
+    openClientAccountModal('order');return;
+  }
+  placeClientOrder();
+  toggleClientCart();
+}
+
+function openClientAccount(){openClientAccountModal('account');}
+
+function openClientAccountModal(mode='account'){
+  const isLoggedIn=!!S.clientUser;
+  const accountContent=isLoggedIn?`
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(201,168,76,0.2);border:2px solid rgba(201,168,76,0.4);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:var(--gold3);margin:0 auto 12px">${initials(S.clientUser.name)}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#F0EAD6">${S.clientUser.name}</div>
+      <div style="font-size:12px;color:rgba(240,234,214,0.4);margin-top:4px">${S.clientUser.email}</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:rgba(240,234,214,0.35);margin-bottom:12px">Mes commandes récentes</div>
+      ${S.orders.filter(o=>o.clientEmail===S.clientUser.email).slice(0,5).map(o=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <div><div style="font-size:13px;color:#F0EAD6;font-weight:500">${fCFA(o.total)}</div><div style="font-size:11px;color:rgba(240,234,214,0.35)">${timeAgo(o.createdAt)}</div></div>
+          ${orderStatusBadge(o.status)}
+        </div>`).join('')||`<p style="font-size:13px;color:rgba(240,234,214,0.3);text-align:center;padding:16px 0">Aucune commande pour l'instant</p>`}
+    </div>
+    ${mode==='order'?`<button class="client-btn-gold" onclick="placeClientOrder();closeModal();toggleClientCart()">✓ Confirmer ma commande</button>`:''}
+    <button onclick="S.clientUser=null;document.getElementById('client-account-label').textContent='Mon compte';closeModal();showToast('Déconnecté')" style="width:100%;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;color:rgba(240,234,214,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:8px">Se déconnecter</button>
+  `:
+  `<div class="client-form-tabs">
+    <button class="client-form-tab active" onclick="switchClientModalTab('login',this)">Connexion</button>
+    <button class="client-form-tab" onclick="switchClientModalTab('register',this)">Créer un compte</button>
+  </div>
+  <div id="cm-login">
+    <div style="margin-bottom:12px"><label class="client-form-label">Email</label><input class="client-input" id="cm-email" type="email" placeholder="votre@email.com"></div>
+    <div style="margin-bottom:12px"><label class="client-form-label">Mot de passe</label><input class="client-input" id="cm-pass" type="password" placeholder="••••••••"></div>
+    <button class="client-btn-gold" onclick="clientModalLogin('${mode}')">Se connecter${mode==='order'?' et commander':''}</button>
+  </div>
+  <div id="cm-register" style="display:none">
+    <div style="margin-bottom:12px"><label class="client-form-label">Nom complet</label><input class="client-input" id="cm-name" type="text" placeholder="Prénom Nom"></div>
+    <div style="margin-bottom:12px"><label class="client-form-label">Email</label><input class="client-input" id="cm-remail" type="email" placeholder="votre@email.com"></div>
+    <div style="margin-bottom:12px"><label class="client-form-label">Mot de passe</label><input class="client-input" id="cm-rpass" type="password" placeholder="Min. 6 caractères"></div>
+    <button class="client-btn-gold" onclick="clientModalRegister('${mode}')">Créer mon compte${mode==='order'?' et commander':''}</button>
+  </div>
+  ${mode==='order'?`<button onclick="placeClientOrder();closeModal();toggleClientCart()" style="width:100%;background:none;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;color:rgba(240,234,214,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:10px">Commander sans compte</button>`:''}`;
+  openModal(`
+  <div class="client-modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="client-modal" onclick="event.stopPropagation()">
+      <div class="client-modal-header">
+        <span class="client-modal-title">${isLoggedIn?'Mon Compte':'Connexion'}</span>
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(240,234,214,0.4)" onclick="closeModal()">×</button>
+      </div>
+      <div class="client-modal-body">${accountContent}</div>
+    </div>
+  </div>`);
+}
+
+function switchClientModalTab(tab,btn){
+  document.querySelectorAll('.client-form-tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('cm-login').style.display=tab==='login'?'':'none';
+  document.getElementById('cm-register').style.display=tab==='register'?'':'none';
+}
+
+function clientModalLogin(mode){
+  const email=(document.getElementById('cm-email')||{}).value||'';
+  const pass=(document.getElementById('cm-pass')||{}).value||'';
+  if(!email){showToast('Entrez votre email','error');return;}
+  S.clientUser={name:email.split('@')[0],email,uid:'cl_'+Date.now()};
+  document.getElementById('client-account-label').textContent=S.clientUser.name;
+  closeModal();
+  if(mode==='order'){placeClientOrder();toggleClientCart();}
+  showToast('Connecté !');
+}
+
+function clientModalRegister(mode){
+  const name=(document.getElementById('cm-name')||{}).value.trim()||'';
+  const email=(document.getElementById('cm-remail')||{}).value.trim()||'';
+  if(!name||!email){showToast('Remplissez tous les champs','error');return;}
+  S.clientUser={name,email,uid:'cl_'+Date.now()};
+  S.clients.push({id:uid(),nom:name,tel:'',email,totalAchats:0,montantTotal:0,fidelite:'Standard'});
+  document.getElementById('client-account-label').textContent=name;
+  closeModal();
+  if(mode==='order'){placeClientOrder();toggleClientCart();}
+  showToast(`Bienvenue, ${name} !`);
+}
+
+function switchToClientView(){S.fromAdmin=true;enterClientView();}
+function backToAdmin(){S.fromAdmin=false;setScreen('screen-admin');renderAdminPage();}
+
+// ==================== INIT ====================
+document.getElementById('today-date').textContent=todayStr();
+initApp();
+</script>
+</body>
+</html>
