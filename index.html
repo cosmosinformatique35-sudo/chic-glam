@@ -181,6 +181,75 @@ tbody tr:hover{background:var(--bg)}
 .order-filter-tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border)}
 .order-filter-tab{padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text3);border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
 .order-filter-tab.active{color:var(--green);border-bottom-color:var(--green)}
+/* =========== SUPER ADMIN SCREEN =========== */
+#screen-superadmin{min-height:100vh;background:#0D1117;display:flex}
+.sa-sidebar{width:260px;min-height:100vh;background:linear-gradient(180deg,#0D1117 0%,#161B22 100%);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sa-brand{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sa-brand-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.4);border-radius:20px;padding:4px 12px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#A78BFA;font-weight:600;margin-bottom:12px}
+.sa-brand h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#E2E8F0;letter-spacing:2px}
+.sa-brand p{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-top:3px}
+.sa-user{padding:14px 24px;background:rgba(139,92,246,0.08);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px}
+.sa-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.sa-user-info p{font-size:13px;font-weight:500;color:rgba(255,255,255,0.9)}
+.sa-user-info span{font-size:11px;color:rgba(139,92,246,0.8)}
+.sa-nav{padding:16px 0;flex:1}
+.sa-nav-section{padding:10px 24px 4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:8px}
+.sa-nav-item{display:flex;align-items:center;gap:10px;padding:11px 24px;cursor:pointer;color:rgba(255,255,255,0.5);font-size:13.5px;font-weight:400;transition:all .15s;border-left:3px solid transparent}
+.sa-nav-item:hover{background:rgba(139,92,246,0.08);color:rgba(255,255,255,0.85)}
+.sa-nav-item.active{background:rgba(139,92,246,0.15);color:#A78BFA;border-left-color:#7C3AED}
+.sa-main{margin-left:260px;flex:1;display:flex;flex-direction:column;min-height:100vh;background:#0D1117}
+.sa-topbar{background:#161B22;border-bottom:1px solid rgba(255,255,255,0.06);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.sa-topbar-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:#E2E8F0}
+.sa-badge{background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.4);color:#A78BFA;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px}
+.sa-content{padding:24px 28px;flex:1}
+.sa-card{background:#161B22;border:1px solid rgba(255,255,255,0.06);border-radius:10px}
+.sa-card-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between}
+.sa-card-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#E2E8F0}
+.sa-card-body{padding:20px}
+.sa-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.sa-kpi{background:#161B22;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:18px;border-left:4px solid #7C3AED}
+.sa-kpi-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:500}
+.sa-kpi-value{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#E2E8F0;margin:4px 0 2px}
+.sa-kpi-sub{font-size:11px;color:#A78BFA;font-weight:500}
+.sa-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.sa-table thead th{text-align:left;padding:10px 16px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.25);font-weight:500;border-bottom:1px solid rgba(255,255,255,0.06);background:#0D1117}
+.sa-table tbody td{padding:13px 16px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.75)}
+.sa-table tbody tr:last-child td{border-bottom:none}
+.sa-table tbody tr:hover{background:rgba(139,92,246,0.05)}
+.badge-active{background:rgba(52,211,153,0.15);color:#34D399;border:1px solid rgba(52,211,153,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-suspended{background:rgba(239,68,68,0.15);color:#F87171;border:1px solid rgba(239,68,68,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-expired{background:rgba(245,158,11,0.15);color:#FBBF24;border:1px solid rgba(245,158,11,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-trial{background:rgba(139,92,246,0.15);color:#A78BFA;border:1px solid rgba(139,92,246,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-plan-standard{background:rgba(99,102,241,0.15);color:#818CF8;border:1px solid rgba(99,102,241,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-plan-premium{background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.sa-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.sa-btn-primary{background:linear-gradient(135deg,#7C3AED,#9F67FA);color:#fff}.sa-btn-primary:hover{background:linear-gradient(135deg,#6D28D9,#8B5CF6)}
+.sa-btn-danger{background:rgba(239,68,68,0.15);color:#F87171;border:1px solid rgba(239,68,68,0.2)}.sa-btn-danger:hover{background:rgba(239,68,68,0.25)}
+.sa-btn-success{background:rgba(52,211,153,0.15);color:#34D399;border:1px solid rgba(52,211,153,0.2)}.sa-btn-success:hover{background:rgba(52,211,153,0.25)}
+.sa-btn-outline{background:transparent;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.1)}.sa-btn-outline:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.8)}
+.sa-btn-sm{padding:6px 12px;font-size:12px}
+.sa-input{width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#E2E8F0;background:#0D1117;outline:none;transition:border .15s}
+.sa-input:focus{border-color:#7C3AED;box-shadow:0 0 0 3px rgba(124,58,237,0.15)}
+.sa-input select{background:#0D1117}
+.sa-select{width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#E2E8F0;background:#0D1117;outline:none;transition:border .15s}
+.sa-select:focus{border-color:#7C3AED}
+.sa-form-group{margin-bottom:16px}
+.sa-form-label{display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,0.4);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase}
+.sa-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
+.sa-modal{background:#161B22;border:1px solid rgba(255,255,255,0.08);border-radius:12px;width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6)}
+.sa-modal-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between}
+.sa-modal-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:#E2E8F0;font-weight:600}
+.sa-modal-body{padding:24px}
+.sa-modal-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:10px;justify-content:flex-end}
+.sa-search{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;background:#0D1117;width:240px}
+.sa-search input{border:none;outline:none;padding:9px 0;flex:1;font-size:13.5px;background:transparent;color:#E2E8F0}
+.sa-search input::placeholder{color:rgba(255,255,255,0.2)}
+/* Auth super admin link */
+.sa-auth-link{text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.sa-auth-link a{font-size:12px;color:var(--text3);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.sa-auth-link a:hover{color:#7C3AED}
+/* Super admin form in auth */
+#form-superadmin{display:none}
 /* =========== CLIENT SCREEN (LUXURY DARK) =========== */
 #screen-client{min-height:100vh;background:#0B0B0B;color:#F0EAD6;display:flex;flex-direction:column}
 .client-header{background:rgba(11,11,11,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.2);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
@@ -297,9 +366,7 @@ tbody tr:hover{background:var(--bg)}
   </div>
   <div class="auth-right">
     <div class="auth-box">
-      <div id="demo-banner" class="auth-demo-badge" style="margin-bottom:18px">
-        ⚡ Mode Démo actif — configurer Firebase pour la production
-      </div>
+      <div id="demo-banner" class="hidden"></div>
       <div class="auth-mode-tabs">
         <button class="auth-mode-tab active" onclick="switchMode('admin')">👔 Administrateur</button>
         <button class="auth-mode-tab" onclick="switchMode('client')">🛍️ Espace Client</button>
@@ -320,7 +387,6 @@ tbody tr:hover{background:var(--bg)}
         <button class="btn btn-primary btn-full btn-lg mt-3" onclick="loginAdmin()" style="justify-content:center">
           Se connecter →
         </button>
-        <p class="text-sm text-muted text-center mt-2">Démo: admin@elara.com / admin123</p>
       </div>
 
       <!-- CLIENT FORM -->
@@ -339,10 +405,37 @@ tbody tr:hover{background:var(--bg)}
         <div id="client-register-form" class="hidden">
           <div class="form-group"><label class="form-label">Nom complet</label><input type="text" id="cr-name" placeholder="Prénom Nom"></div>
           <div class="form-group"><label class="form-label">Email</label><input type="email" id="cr-email" placeholder="votre@email.com"></div>
+          <div class="form-group"><label class="form-label">Téléphone <span style="color:var(--danger)">*</span></label><input type="tel" id="cr-phone" placeholder="Ex: 77 123 45 67"></div>
           <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" id="cr-password" placeholder="Min. 6 caractères"></div>
           <button class="btn btn-primary btn-full mt-2" style="justify-content:center" onclick="registerClient()">Créer mon compte →</button>
         </div>
         <p class="text-sm text-muted text-center mt-2" style="cursor:pointer;text-decoration:underline" onclick="enterClientCatalogAsGuest()">Continuer sans compte →</p>
+      </div>
+
+      <!-- SUPER ADMIN FORM -->
+      <div id="form-superadmin">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+          <div style="width:40px;height:40px;background:linear-gradient(135deg,#7C3AED,#A78BFA);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">🛡️</div>
+          <div>
+            <h2 class="auth-subtitle" style="margin-bottom:0">Super Administrateur</h2>
+            <p style="font-size:12px;color:var(--text3)">Gestion globale des licences & accès</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Super Admin</label>
+          <input type="email" id="sa-email" placeholder="superadmin@exemple.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <input type="password" id="sa-password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-full btn-lg mt-3" style="background:linear-gradient(135deg,#7C3AED,#9F67FA);color:#fff;justify-content:center" onclick="loginSuperAdmin()">
+          Accéder au panneau →
+        </button>
+      </div>
+
+      <div class="sa-auth-link">
+        <a onclick="toggleSuperAdminForm()">🛡️ Accès Super Admin</a>
       </div>
     </div>
   </div>
@@ -400,6 +493,11 @@ tbody tr:hover{background:var(--bg)}
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         Rapports
       </div>
+      <div class="nav-section">Boutique</div>
+      <div class="nav-item" onclick="adminNav('parametres',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Paramètres boutique
+      </div>
     </div>
     <div class="sidebar-bottom">
       <button class="btn btn-ghost" style="color:rgba(255,255,255,0.5);width:100%" onclick="switchToClientView()">
@@ -410,7 +508,7 @@ tbody tr:hover{background:var(--bg)}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Déconnexion
       </button>
-      <p class="text-xs text-muted mt-2" id="demo-mode-label">Mode Démo</p>
+      <p class="text-xs text-muted mt-2 hidden" id="demo-mode-label">Mode Démo</p>
     </div>
   </nav>
   <div class="admin-main">
@@ -418,11 +516,69 @@ tbody tr:hover{background:var(--bg)}
       <div class="topbar-title" id="page-title">Tableau de bord</div>
       <div class="topbar-right">
         <span class="topbar-date" id="today-date"></span>
-        <span class="demo-badge" id="topbar-mode-badge">MODE DÉMO</span>
+        <span class="demo-badge hidden" id="topbar-mode-badge">MODE DÉMO</span>
       </div>
     </div>
     <div class="content" id="admin-content">
       <div class="loading"><div class="spinner"></div><p class="text-muted">Chargement...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SUPER ADMIN SCREEN ==================== -->
+<div id="screen-superadmin" class="hidden">
+  <nav class="sa-sidebar">
+    <div class="sa-brand">
+      <div class="sa-brand-badge">🛡️ Super Admin</div>
+      <h1>CHIC & GLAM</h1>
+      <p>Panneau de contrôle global</p>
+    </div>
+    <div class="sa-user">
+      <div class="sa-avatar" id="sa-avatar-init">SA</div>
+      <div class="sa-user-info">
+        <p id="sa-user-name">Super Admin</p>
+        <span>Accès total</span>
+      </div>
+    </div>
+    <div class="sa-nav">
+      <div class="sa-nav-section">Tableau de bord</div>
+      <div class="sa-nav-item active" onclick="saNav('overview',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Vue d'ensemble
+      </div>
+      <div class="sa-nav-section">Gestion</div>
+      <div class="sa-nav-item" onclick="saNav('licences',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        Licences
+        <span id="sa-licences-badge" style="background:rgba(139,92,246,0.3);color:#A78BFA;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto">0</span>
+      </div>
+      <div class="sa-nav-item" onclick="saNav('admins',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Administrateurs
+      </div>
+      <div class="sa-nav-section">Configuration</div>
+      <div class="sa-nav-item" onclick="saNav('parametres',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Paramètres système
+      </div>
+    </div>
+    <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,0.06)">
+      <button onclick="doLogout()" style="width:100%;background:none;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,0.1)';this.style.color='#F87171'" onmouseout="this.style.background='none';this.style.color='rgba(255,255,255,0.4)'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </nav>
+  <div class="sa-main">
+    <div class="sa-topbar">
+      <div class="sa-topbar-title" id="sa-page-title">Vue d'ensemble</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="sa-topbar-date" style="font-size:12px;color:rgba(255,255,255,0.3)"></span>
+        <span class="sa-badge">SUPER ADMIN</span>
+      </div>
+    </div>
+    <div class="sa-content" id="sa-content">
+      <div class="loading"><div class="spinner"></div></div>
     </div>
   </div>
 </div>
@@ -483,26 +639,90 @@ tbody tr:hover{background:var(--bg)}
 //  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
 // ============================================================
 
-// ==================== ⚙️ CONFIGURATION ====================
-// 1. Remplacez ces valeurs par vos informations Firebase
-// 2. Créez un projet sur https://console.firebase.google.com
-// 3. Activez Authentication (email/password), Firestore et Storage
-
-const ADMIN_EMAIL = 'admin@elara.com'; // Email de l'administrateur
-
-const firebaseConfig = {
-  apiKey: "VOTRE_API_KEY",
-  authDomain: "VOTRE_PROJECT_ID.firebaseapp.com",
-  projectId: "VOTRE_PROJECT_ID",
-  storageBucket: "VOTRE_PROJECT_ID.appspot.com",
-  messagingSenderId: "VOTRE_SENDER_ID",
-  appId: "VOTRE_APP_ID"
-};
-
+// ============================================================
+//  ██████╗  ██████╗ ██╗   ██╗████████╗██╗ ██████╗ ██╗   ██╗███████╗
+//  ██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██║██╔═══██╗██║   ██║██╔════╝
+//  ██████╔╝██║   ██║██║   ██║   ██║   ██║██║   ██║██║   ██║█████╗
+//  ██╔══██╗██║   ██║██║   ██║   ██║   ██║██║▄▄ ██║██║   ██║██╔══╝
+//  ██████╔╝╚██████╔╝╚██████╔╝   ██║   ██║╚██████╔╝╚██████╔╝███████╗
+//  ╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝ ╚══▀▀═╝  ╚═════╝ ╚══════╝
+//  Firebase Realtime DB + Auth + localStorage fallback
 // ============================================================
 
-const DEMO_MODE = firebaseConfig.apiKey === "VOTRE_API_KEY";
-let db, auth, storage, unsubscribers = [];
+const firebaseConfig = {
+  apiKey: "AIzaSyDFn-wk4i9zuBueDm1AXxiEmYyv6D8xmho",
+  authDomain: "boutique-chic-and-glam.firebaseapp.com",
+  databaseURL: "https://boutique-chic-and-glam-default-rtdb.firebaseio.com",
+  projectId: "boutique-chic-et-glam",
+  storageBucket: "boutique-chic-et-glam.appspot.com"
+};
+
+// Firebase sera initialisé dans initApp()
+let db, auth, fbStorage, fbDB, unsubscribers = [];
+let FIREBASE_OK = false;
+
+// ==================== BOUTIQUE CONFIG (localStorage) ====================
+function getShopConfig(){
+  try{return JSON.parse(localStorage.getItem('chic_shop_config'))||{};}catch{return {};}
+}
+function saveShopConfig(cfg){
+  const current=getShopConfig();
+  const merged={...current,...cfg};
+  localStorage.setItem('chic_shop_config',JSON.stringify(merged));
+  // Sync config to Firebase too
+  if(FIREBASE_OK)fbDB.ref('config').set(merged).catch(()=>{});
+}
+function getAdminEmail(){return getShopConfig().adminEmail||'admin@boutique.com';}
+function getAdminPassword(){return getShopConfig().adminPassword||'admin123';}
+
+const ADMIN_EMAIL = 'admin';// placeholder, checked dynamically
+
+// ==================== LOCALSTORAGE CACHE ====================
+// Utilisé comme cache local et fallback si Firebase est offline
+const LS = {
+  get(key){try{return JSON.parse(localStorage.getItem('chic_'+key))||null;}catch{return null;}},
+  set(key,val){localStorage.setItem('chic_'+key,JSON.stringify(val));},
+  save(){
+    LS.set('products',S.products);
+    LS.set('clients',S.clients);
+    LS.set('orders',S.orders);
+    LS.set('ventes',S.ventes);
+    LS.set('dettes',S.dettes);
+  }
+};
+
+// ==================== FIREBASE HELPERS ====================
+function fbList(snap){
+  if(!snap.val())return[];
+  return Object.entries(snap.val()).map(([id,v])=>({id,...v}));
+}
+async function fbSet(path,data){
+  if(!FIREBASE_OK)return;
+  const {id,...rest}=data;
+  await fbDB.ref(path+'/'+id).set(rest);
+}
+async function fbUpdate(path,id,data){
+  if(!FIREBASE_OK)return;
+  await fbDB.ref(path+'/'+id).update(data);
+}
+async function fbDelete(path,id){
+  if(!FIREBASE_OK)return;
+  await fbDB.ref(path+'/'+id).remove();
+}
+async function fbPush(path,data){
+  if(!FIREBASE_OK)return null;
+  const ref=await fbDB.ref(path).push(data);
+  return ref.key;
+}
+// Upload image to Firebase Storage (base64)
+async function uploadImage(base64,path){
+  if(!FIREBASE_OK||!fbStorage)return base64;
+  try{
+    const ref=fbStorage.ref(path);
+    await ref.putString(base64,'data_url');
+    return await ref.getDownloadURL();
+  }catch{return base64;}
+}
 
 // ==================== STATE ====================
 const S = {
@@ -589,7 +809,7 @@ function showToast(msg,type='success'){
   setTimeout(()=>t.className='',3000);
 }
 function setScreen(id){
-  ['screen-auth','screen-admin','screen-client'].forEach(s=>document.getElementById(s).classList.add('hidden'));
+  ['screen-auth','screen-admin','screen-client','screen-superadmin'].forEach(s=>document.getElementById(s).classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
 }
 function productImgHtml(p,cls,style=''){
@@ -599,42 +819,145 @@ function productImgHtml(p,cls,style=''){
 function closeModal(){const el=document.getElementById('modal-root');if(el)el.innerHTML=''}
 function openModal(html){document.getElementById('modal-root').innerHTML=html}
 
-// ==================== FIREBASE / DEMO INIT ====================
+// ==================== INIT APP ====================
 function initApp(){
-  if(!DEMO_MODE){
-    try{
-      if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-      db=firebase.firestore();auth=firebase.auth();storage=firebase.storage();
-      document.getElementById('demo-banner').classList.add('hidden');
-      document.getElementById('topbar-mode-badge').textContent='FIREBASE';
-      document.getElementById('topbar-mode-badge').style.background='rgba(58,122,90,0.15)';
-      document.getElementById('topbar-mode-badge').style.color='var(--success)';
-      document.getElementById('demo-mode-label').textContent='Firebase connecté';
-      auth.onAuthStateChanged(handleAuthChange);
-    }catch(e){console.error('Firebase init error:',e);showToast('Erreur Firebase — Mode Démo activé','error')}
-  } else {
-    S.products=[...DEMO_PRODUCTS.map(p=>({...p}))];
-    S.clients=[...DEMO_CLIENTS.map(c=>({...c}))];
-    S.ventes=[...DEMO_VENTES.map(v=>({...v}))];
-    S.orders=[...DEMO_ORDERS.map(o=>({...o}))];
-    S.dettes=[...DEMO_DETTES.map(d=>({...d,paiements:[...d.paiements]}))];
-    updatePendingCount();
-    document.getElementById('today-date').textContent=todayStr();
-    setScreen('screen-auth');
+  document.getElementById('today-date').textContent=todayStr();
+  applyShopBranding();
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+    auth=firebase.auth();
+    fbDB=firebase.database();
+    // Storage optionnel
+    try{fbStorage=firebase.storage();}catch{}
+    FIREBASE_OK=true;
+    // Charger config boutique depuis Firebase
+    fbDB.ref('config').once('value').then(snap=>{
+      if(snap.val()){
+        const remote=snap.val();
+        const local=getShopConfig();
+        localStorage.setItem('chic_shop_config',JSON.stringify({...local,...remote}));
+        applyShopBranding();
+      }
+    }).catch(()=>{});
+    // Auth listener
+    auth.onAuthStateChanged(handleAuthChange);
+  }catch(e){
+    console.warn('Firebase init failed, using localStorage fallback:',e);
+    FIREBASE_OK=false;
+    initLocalMode();
   }
+}
+
+function initLocalMode(){
+  S.products = LS.get('products') || DEMO_PRODUCTS.map(p=>({...p}));
+  S.clients  = LS.get('clients')  || DEMO_CLIENTS.map(c=>({...c}));
+  S.ventes   = LS.get('ventes')   || DEMO_VENTES.map(v=>({...v}));
+  S.orders   = LS.get('orders')   || DEMO_ORDERS.map(o=>({...o,createdAt:typeof o.createdAt==='object'?new Date(o.createdAt).toISOString():o.createdAt}));
+  S.dettes   = LS.get('dettes')   || DEMO_DETTES.map(d=>({...d,paiements:[...d.paiements]}));
+  updatePendingCount();
+  setScreen('screen-auth');
 }
 
 function handleAuthChange(user){
   if(user){
     S.user=user;
-    db.collection('users').doc(user.uid).get().then(doc=>{
-      const data=doc.data()||{};
-      S.role=data.role||(user.email===ADMIN_EMAIL?'admin':'client');
-      if(S.role==='admin'){enterAdmin(user.displayName||user.email);}
-      else{S.clientUser={name:data.name||user.displayName||user.email,email:user.email,uid:user.uid};enterClientView();}
+    // Check superadmin first
+    fbDB.ref('superadmins/'+user.uid).once('value').then(saSnap=>{
+      if(saSnap.exists()||user.email===getSuperAdminEmail()){
+        S.role='superadmin';
+        enterSuperAdmin(saSnap.val()?.name||user.displayName||user.email||'Super Admin');
+      } else {
+        // Vérifier si c'est un admin normal
+        fbDB.ref('admins/'+user.uid).once('value').then(snap=>{
+          if(snap.exists()||user.email===getAdminEmail()){
+            S.role='admin';
+            setupRealtimeListeners();
+            enterAdmin(user.displayName||user.email||'Administrateur');
+          } else {
+            S.role='client';
+            fbDB.ref('users/'+user.uid).once('value').then(usnap=>{
+              const data=usnap.val()||{};
+              S.clientUser={name:data.name||user.displayName||user.email,email:user.email,phone:data.phone||'',uid:user.uid};
+              fbDB.ref('products').on('value',snap=>{
+                S.products=fbList(snap);LS.set('products',S.products);
+                renderClientCatalog();
+              });
+              fbDB.ref('orders').orderByChild('clientId').equalTo(user.uid).on('value',snap=>{
+                const myOrders=fbList(snap);
+                myOrders.forEach(o=>{const idx=S.orders.findIndex(x=>x.id===o.id);if(idx>=0)S.orders[idx]=o;else S.orders.push(o);});
+              });
+              enterClientView();
+            });
+          }
+        });
+      }
     });
   } else {
-    S.user=null;S.role=null;setScreen('screen-auth');
+    S.user=null;S.role=null;S.clientUser=null;
+    setScreen('screen-auth');
+  }
+}
+
+function setupRealtimeListeners(){
+  // Produits
+  fbDB.ref('products').on('value',snap=>{
+    S.products=fbList(snap);LS.set('products',S.products);
+    if(S.currentPage==='produits'||S.currentPage==='caisse')renderAdminPage();
+  });
+  // Commandes (temps réel — crucial pour voir les nouvelles commandes)
+  fbDB.ref('orders').on('value',snap=>{
+    S.orders=fbList(snap).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    LS.set('orders',S.orders);
+    updatePendingCount();
+    if(S.currentPage==='commandes')renderAdminPage();
+  });
+  // Clients
+  fbDB.ref('clients').on('value',snap=>{
+    S.clients=fbList(snap);LS.set('clients',S.clients);
+    if(S.currentPage==='clients')renderAdminPage();
+  });
+  // Ventes
+  fbDB.ref('ventes').on('value',snap=>{
+    S.ventes=fbList(snap).sort((a,b)=>b.date.localeCompare(a.date));
+    LS.set('ventes',S.ventes);
+    if(S.currentPage==='ventes')renderAdminPage();
+  });
+  // Dettes
+  fbDB.ref('dettes').on('value',snap=>{
+    S.dettes=fbList(snap);LS.set('dettes',S.dettes);
+    updatePendingCount();
+    if(S.currentPage==='dettes')renderAdminPage();
+  });
+}
+
+function applyShopBranding(){
+  const cfg=getShopConfig();
+  const name=cfg.shopName||'CHIC & GLAM';
+  const logo=cfg.shopLogo||'';
+  // Auth page
+  const authTitle=document.querySelector('.auth-logo h1');
+  if(authTitle)authTitle.textContent=name;
+  // Admin sidebar
+  const sidebarBrand=document.querySelector('.sidebar-brand h1');
+  if(sidebarBrand)sidebarBrand.textContent=name;
+  // Client header
+  const clientBrand=document.querySelector('.client-brand');
+  if(clientBrand)clientBrand.textContent=name;
+  // Page title
+  document.title=name+' — Boutique Prêt-à-Porter';
+  // Logo dans auth
+  if(logo){
+    const logoDiv=document.querySelector('.auth-logo');
+    if(logoDiv){
+      const existing=logoDiv.querySelector('.shop-logo-img');
+      if(!existing){
+        const img=document.createElement('img');
+        img.className='shop-logo-img';
+        img.src=logo;
+        img.style.cssText='width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin-bottom:12px';
+        logoDiv.insertBefore(img,logoDiv.firstChild);
+      } else {existing.src=logo;}
+    }
   }
 }
 
@@ -653,49 +976,654 @@ function switchClientTab(tab){
 async function loginAdmin(){
   const email=document.getElementById('admin-email').value.trim();
   const pass=document.getElementById('admin-password').value;
-  if(DEMO_MODE){
-    if(email===ADMIN_EMAIL&&pass==='admin123'){enterAdmin('Administrateur');}
+  if(!email||!pass){showToast('Remplissez tous les champs','error');return;}
+  if(FIREBASE_OK){
+    try{
+      await auth.signInWithEmailAndPassword(email,pass);
+      // handleAuthChange prend le relais automatiquement
+    }catch(e){
+      // Fallback credentials locaux
+      if(email===getAdminEmail()&&pass===getAdminPassword()){
+        initLocalMode();enterAdmin(getShopConfig().adminName||'Administrateur');
+      } else {showToast('Email ou mot de passe incorrect','error');}
+    }
+  } else {
+    if(email===getAdminEmail()&&pass===getAdminPassword()){enterAdmin(getShopConfig().adminName||'Administrateur');}
     else showToast('Email ou mot de passe incorrect','error');
-    return;
   }
-  try{await auth.signInWithEmailAndPassword(email,pass);}
-  catch(e){showToast(e.message,'error');}
 }
 
 async function loginClient(){
   const email=document.getElementById('cl-email').value.trim();
   const pass=document.getElementById('cl-password').value;
-  if(DEMO_MODE){
-    if(!email){showToast('Entrez votre email','error');return;}
-    S.clientUser={name:email.split('@')[0],email,uid:'demo_'+Date.now()};
-    enterClientView();return;
+  if(!email||!pass){showToast('Entrez votre email et mot de passe','error');return;}
+  if(FIREBASE_OK){
+    try{
+      await auth.signInWithEmailAndPassword(email,pass);
+      // handleAuthChange prend le relais
+    }catch(e){
+      // Fallback localStorage
+      const accounts=LS.get('accounts')||[];
+      const account=accounts.find(a=>a.email===email&&a.password===pass);
+      if(account){S.clientUser={name:account.name,email:account.email,phone:account.phone||'',uid:account.uid};initLocalMode();enterClientView();}
+      else showToast('Email ou mot de passe incorrect','error');
+    }
+  } else {
+    const accounts=LS.get('accounts')||[];
+    const account=accounts.find(a=>a.email===email&&a.password===pass);
+    if(account){S.clientUser={name:account.name,email:account.email,phone:account.phone||'',uid:account.uid};initLocalMode();enterClientView();}
+    else showToast('Email ou mot de passe incorrect','error');
   }
-  try{await auth.signInWithEmailAndPassword(email,pass);}
-  catch(e){showToast(e.message,'error');}
 }
 
 async function registerClient(){
   const name=document.getElementById('cr-name').value.trim();
   const email=document.getElementById('cr-email').value.trim();
+  const phone=document.getElementById('cr-phone').value.trim();
   const pass=document.getElementById('cr-password').value;
-  if(!name||!email||!pass){showToast('Remplissez tous les champs','error');return;}
-  if(DEMO_MODE){
-    S.clientUser={name,email,uid:'demo_'+Date.now()};
-    S.clients.push({id:uid(),nom:name,tel:'',email,totalAchats:0,montantTotal:0,fidelite:'Standard'});
-    enterClientView();return;
+  if(!name||!email||!phone||!pass){showToast('Remplissez tous les champs','error');return;}
+  if(phone.replace(/\s/g,'').length<8){showToast('Numéro de téléphone invalide','error');return;}
+  if(pass.length<6){showToast('Mot de passe trop court (min. 6 caractères)','error');return;}
+  if(FIREBASE_OK){
+    try{
+      const cred=await auth.createUserWithEmailAndPassword(email,pass);
+      await cred.user.updateProfile({displayName:name});
+      const userData={name,email,phone,role:'client',fidelite:'Standard',totalAchats:0,montantTotal:0};
+      await fbDB.ref('users/'+cred.user.uid).set(userData);
+      // Ajouter aussi dans la liste clients admin
+      const clientId=uid();
+      await fbDB.ref('clients/'+clientId).set({nom:name,tel:phone,email,totalAchats:0,montantTotal:0,fidelite:'Standard',uid:cred.user.uid});
+      // handleAuthChange prend le relais
+    }catch(e){showToast(e.message,'error');}
+  } else {
+    const accounts=LS.get('accounts')||[];
+    if(accounts.find(a=>a.email===email)){showToast('Un compte existe déjà avec cet email','error');return;}
+    const newUid='cl_'+Date.now();
+    accounts.push({uid:newUid,name,email,phone,password:pass});
+    LS.set('accounts',accounts);
+    S.clientUser={name,email,phone,uid:newUid};
+    S.clients.push({id:uid(),nom:name,tel:phone,email,totalAchats:0,montantTotal:0,fidelite:'Standard'});
+    LS.save();
+    enterClientView();
+    showToast(`Bienvenue, ${name} !`);
   }
-  try{
-    const cred=await auth.createUserWithEmailAndPassword(email,pass);
-    await cred.user.updateProfile({displayName:name});
-    await db.collection('users').doc(cred.user.uid).set({name,email,role:'client',fidelite:'Standard',totalAchats:0,montantTotal:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }catch(e){showToast(e.message,'error');}
 }
 
 function enterClientCatalogAsGuest(){S.clientUser=null;enterClientView();}
 
 async function doLogout(){
-  if(DEMO_MODE){S.user=null;S.role=null;S.clientUser=null;setScreen('screen-auth');}
-  else await auth.signOut();
+  if(FIREBASE_OK&&auth.currentUser){await auth.signOut();}
+  else{S.user=null;S.role=null;S.clientUser=null;setScreen('screen-auth');}
+}
+
+// ==================== SUPER ADMIN FUNCTIONS ====================
+
+// Credentials Super Admin
+function getSuperAdminEmail(){return 'cosmosinformatique@gmail.com';}
+function getSuperAdminPassword(){return 'Savoir@144014401440!';}
+
+// Toggle le formulaire SA dans la page auth
+function toggleSuperAdminForm(){
+  const saForm=document.getElementById('form-superadmin');
+  const adminForm=document.getElementById('form-admin');
+  const clientForm=document.getElementById('form-client');
+  const tabs=document.querySelector('.auth-mode-tabs');
+  if(saForm.style.display==='block'){
+    saForm.style.display='none';
+    adminForm.classList.remove('hidden');
+    tabs.style.display='';
+  } else {
+    saForm.style.display='block';
+    adminForm.classList.add('hidden');
+    clientForm.classList.add('hidden');
+    tabs.style.display='none';
+  }
+}
+
+async function loginSuperAdmin(){
+  const email=(document.getElementById('sa-email').value||'').trim();
+  const pass=document.getElementById('sa-password').value||'';
+  if(!email||!pass){showToast('Remplissez tous les champs','error');return;}
+  if(FIREBASE_OK){
+    try{
+      const cred=await auth.signInWithEmailAndPassword(email,pass);
+      const saSnap=await fbDB.ref('superadmins/'+cred.user.uid).once('value');
+      if(saSnap.exists()||email===getSuperAdminEmail()){
+        S.role='superadmin';
+        enterSuperAdmin(saSnap.val()?.name||cred.user.displayName||email);
+      } else {
+        await auth.signOut();
+        showToast('Accès Super Admin refusé','error');
+      }
+    }catch(e){
+      // Fallback local
+      if(email===getSuperAdminEmail()&&pass===getSuperAdminPassword()){
+        S.role='superadmin';
+        enterSuperAdmin('Super Admin');
+      } else { showToast('Identifiants incorrects','error'); }
+    }
+  } else {
+    if(email===getSuperAdminEmail()&&pass===getSuperAdminPassword()){
+      S.role='superadmin';
+      enterSuperAdmin('Super Admin');
+    } else { showToast('Identifiants incorrects','error'); }
+  }
+}
+
+function enterSuperAdmin(name){
+  S.role='superadmin';
+  document.getElementById('sa-avatar-init').textContent=initials(name);
+  document.getElementById('sa-user-name').textContent=name;
+  document.getElementById('sa-topbar-date').textContent=todayStr();
+  setScreen('screen-superadmin');
+  saNav('overview',document.querySelector('.sa-nav-item'));
+}
+
+function saNav(page,el){
+  SA.page=page;
+  document.querySelectorAll('.sa-nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={overview:'Vue d\'ensemble',licences:'Gestion des Licences',admins:'Administrateurs',parametres:'Paramètres système'};
+  document.getElementById('sa-page-title').textContent=titles[page]||page;
+  renderSAPage();
+}
+
+// ========== STATE SUPER ADMIN ==========
+const SA = {
+  page:'overview',
+  licences:[],
+  admins_list:[],
+  saSearch:'',
+};
+
+function loadSAData(cb){
+  if(FIREBASE_OK&&fbDB){
+    Promise.all([
+      fbDB.ref('licences').once('value').then(s=>SA.licences=fbList(s)),
+      fbDB.ref('admins').once('value').then(s=>{
+        const raw=s.val()||{};
+        SA.admins_list=Object.entries(raw).map(([uid,v])=>({uid,...v}));
+      })
+    ]).then(()=>{
+      document.getElementById('sa-licences-badge').textContent=SA.licences.length;
+      if(cb)cb();
+    }).catch(()=>{loadSADataLocal();if(cb)cb();});
+  } else { loadSADataLocal();if(cb)cb(); }
+}
+
+function loadSADataLocal(){
+  SA.licences=LS.get('sa_licences')||[];
+  SA.admins_list=LS.get('sa_admins')||[];
+  document.getElementById('sa-licences-badge').textContent=SA.licences.length;
+}
+
+function saveSALicencesLocal(){
+  LS.set('sa_licences',SA.licences);
+  LS.set('sa_admins',SA.admins_list);
+}
+
+// ========== RENDER SUPER ADMIN PAGE ==========
+function renderSAPage(){
+  loadSAData(()=>{
+    const el=document.getElementById('sa-content');
+    if(!el)return;
+    if(SA.page==='overview')el.innerHTML=renderSAOverview();
+    else if(SA.page==='licences')el.innerHTML=renderSALicences();
+    else if(SA.page==='admins')el.innerHTML=renderSAAdmins();
+    else if(SA.page==='parametres')el.innerHTML=renderSAParametres();
+  });
+}
+
+// ========== OVERVIEW ==========
+function renderSAOverview(){
+  const total=SA.licences.length;
+  const active=SA.licences.filter(l=>l.status==='active').length;
+  const suspended=SA.licences.filter(l=>l.status==='suspended').length;
+  const expired=SA.licences.filter(l=>isLicenceExpired(l)&&l.status!=='suspended').length;
+  return`
+  <div class="sa-kpi-grid">
+    <div class="sa-kpi" style="border-left-color:#A78BFA">
+      <div class="sa-kpi-label">Licences totales</div>
+      <div class="sa-kpi-value">${total}</div>
+      <div class="sa-kpi-sub">Boutiques enregistrées</div>
+    </div>
+    <div class="sa-kpi" style="border-left-color:#34D399">
+      <div class="sa-kpi-label">Actives</div>
+      <div class="sa-kpi-value" style="color:#34D399">${active}</div>
+      <div class="sa-kpi-sub">Licences en cours</div>
+    </div>
+    <div class="sa-kpi" style="border-left-color:#FBBF24">
+      <div class="sa-kpi-label">Expirées</div>
+      <div class="sa-kpi-value" style="color:#FBBF24">${expired}</div>
+      <div class="sa-kpi-sub">À renouveler</div>
+    </div>
+    <div class="sa-kpi" style="border-left-color:#F87171">
+      <div class="sa-kpi-label">Suspendues</div>
+      <div class="sa-kpi-value" style="color:#F87171">${suspended}</div>
+      <div class="sa-kpi-sub">Accès bloqué</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="sa-card">
+      <div class="sa-card-header">
+        <span class="sa-card-title">Licences récentes</span>
+        <button class="sa-btn sa-btn-primary sa-btn-sm" onclick="saNav('licences',document.querySelectorAll('.sa-nav-item')[2])">Voir tout</button>
+      </div>
+      <div style="padding:0">
+        ${SA.licences.length===0?`<p style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;font-size:13px">Aucune licence créée</p>`:''}
+        <table class="sa-table">
+          ${SA.licences.slice(0,5).map(l=>`
+          <tr>
+            <td><div style="font-size:13px;font-weight:500;color:#E2E8F0">${l.boutiqueName||'—'}</div><div style="font-size:11px;color:rgba(255,255,255,0.3)">${l.adminEmail||'—'}</div></td>
+            <td>${licencePlanBadge(l.plan)}</td>
+            <td>${licenceStatusBadge(l)}</td>
+          </tr>`).join('')}
+        </table>
+      </div>
+    </div>
+    <div class="sa-card">
+      <div class="sa-card-header">
+        <span class="sa-card-title">Administrateurs</span>
+        <button class="sa-btn sa-btn-primary sa-btn-sm" onclick="saNav('admins',document.querySelectorAll('.sa-nav-item')[3])">Voir tout</button>
+      </div>
+      <div style="padding:0">
+        ${SA.admins_list.length===0?`<p style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;font-size:13px">Aucun admin créé</p>`:''}
+        <table class="sa-table">
+          ${SA.admins_list.slice(0,5).map(a=>`
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${initials(a.name||a.email||'?')}</div>
+                <div>
+                  <div style="font-size:13px;font-weight:500;color:#E2E8F0">${a.name||'—'}</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.3)">${a.email||'—'}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge-active">Admin</span></td>
+          </tr>`).join('')}
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ========== LICENCES ==========
+function isLicenceExpired(l){
+  if(!l.expiresAt)return false;
+  return new Date(l.expiresAt)<new Date();
+}
+
+function licenceStatusBadge(l){
+  if(l.status==='suspended')return`<span class="badge-suspended">Suspendu</span>`;
+  if(isLicenceExpired(l))return`<span class="badge-expired">Expiré</span>`;
+  if(l.status==='trial')return`<span class="badge-trial">Essai</span>`;
+  return`<span class="badge-active">Actif</span>`;
+}
+
+function licencePlanBadge(plan){
+  if(plan==='premium')return`<span class="badge-plan-premium">Premium</span>`;
+  return`<span class="badge-plan-standard">Standard</span>`;
+}
+
+function renderSALicences(){
+  const q=(SA.saSearch||'').toLowerCase();
+  const filtered=SA.licences.filter(l=>!q||l.boutiqueName?.toLowerCase().includes(q)||l.adminEmail?.toLowerCase().includes(q));
+  return`
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="sa-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input placeholder="Rechercher une boutique ou email..." oninput="SA.saSearch=this.value;renderSAPage()" value="${SA.saSearch}">
+    </div>
+    <button class="sa-btn sa-btn-primary" onclick="openCreateLicenceModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Créer une licence
+    </button>
+  </div>
+  <div class="sa-card">
+    <div class="sa-card-header">
+      <span class="sa-card-title">Licences (${filtered.length})</span>
+    </div>
+    <table class="sa-table">
+      <thead><tr><th>Boutique</th><th>Administrateur</th><th>Plan</th><th>Expiration</th><th>Statut</th><th style="text-align:right">Actions</th></tr></thead>
+      <tbody>
+        ${filtered.length===0?`<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px">Aucune licence trouvée</td></tr>`:''}
+        ${filtered.map(l=>`
+        <tr>
+          <td>
+            <div style="font-size:13px;font-weight:500;color:#E2E8F0">${l.boutiqueName||'—'}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3)">${l.id||'—'}</div>
+          </td>
+          <td>
+            <div style="font-size:13px;color:#E2E8F0">${l.adminName||'—'}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3)">${l.adminEmail||'—'}</div>
+          </td>
+          <td>${licencePlanBadge(l.plan)}</td>
+          <td style="font-size:12px;color:${isLicenceExpired(l)?'#F87171':'rgba(255,255,255,0.5)'}">
+            ${l.expiresAt?new Date(l.expiresAt).toLocaleDateString('fr-SN'):'Illimitée'}
+          </td>
+          <td>${licenceStatusBadge(l)}</td>
+          <td style="text-align:right">
+            <div style="display:flex;gap:6px;justify-content:flex-end">
+              <button class="sa-btn sa-btn-outline sa-btn-sm" onclick="openEditLicenceModal('${l.id}')">✏️ Modifier</button>
+              ${l.status==='suspended'
+                ?`<button class="sa-btn sa-btn-success sa-btn-sm" onclick="toggleLicenceStatus('${l.id}','active')">✓ Activer</button>`
+                :`<button class="sa-btn sa-btn-danger sa-btn-sm" onclick="toggleLicenceStatus('${l.id}','suspended')">⊘ Suspendre</button>`}
+              <button class="sa-btn sa-btn-danger sa-btn-sm" onclick="deleteLicence('${l.id}')">🗑</button>
+            </div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function openCreateLicenceModal(){
+  openModal(`
+  <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="sa-modal" onclick="event.stopPropagation()">
+      <div class="sa-modal-header">
+        <span class="sa-modal-title">Créer une licence</span>
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
+      </div>
+      <div class="sa-modal-body">
+        <div class="sa-form-group"><label class="sa-form-label">Nom de la boutique *</label><input class="sa-input" id="lic-boutique" type="text" placeholder="Ex: CHIC & GLAM Dakar"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Nom de l'administrateur *</label><input class="sa-input" id="lic-admin-name" type="text" placeholder="Prénom Nom"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Email de l'administrateur *</label><input class="sa-input" id="lic-admin-email" type="email" placeholder="admin@boutique.com"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="sa-form-group"><label class="sa-form-label">Plan</label>
+            <select class="sa-select" id="lic-plan">
+              <option value="standard">Standard</option>
+              <option value="premium">Premium</option>
+              <option value="trial">Essai (Trial)</option>
+            </select>
+          </div>
+          <div class="sa-form-group"><label class="sa-form-label">Expiration</label><input class="sa-input" id="lic-expires" type="date"></div>
+        </div>
+        <div class="sa-form-group"><label class="sa-form-label">Notes</label><input class="sa-input" id="lic-notes" type="text" placeholder="Notes optionnelles..."></div>
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="sa-btn sa-btn-primary" onclick="createLicence()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Créer la licence
+        </button>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function createLicence(){
+  const boutiqueName=(document.getElementById('lic-boutique').value||'').trim();
+  const adminName=(document.getElementById('lic-admin-name').value||'').trim();
+  const adminEmail=(document.getElementById('lic-admin-email').value||'').trim();
+  const plan=document.getElementById('lic-plan').value;
+  const expiresAt=document.getElementById('lic-expires').value||'';
+  const notes=document.getElementById('lic-notes').value||'';
+  if(!boutiqueName||!adminName||!adminEmail){showToast('Remplissez les champs obligatoires','error');return;}
+  const licId='lic_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  const newLic={id:licId,boutiqueName,adminName,adminEmail,plan,status:plan==='trial'?'trial':'active',expiresAt,notes,createdAt:new Date().toISOString()};
+  SA.licences.push(newLic);
+  if(FIREBASE_OK){await fbDB.ref('licences/'+licId).set({boutiqueName,adminName,adminEmail,plan,status:newLic.status,expiresAt,notes,createdAt:newLic.createdAt});}
+  saveSALicencesLocal();
+  closeModal();showToast('Licence créée avec succès !');
+  document.getElementById('sa-licences-badge').textContent=SA.licences.length;
+  renderSAPage();
+}
+
+function openEditLicenceModal(id){
+  const l=SA.licences.find(x=>x.id===id);if(!l)return;
+  openModal(`
+  <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="sa-modal" onclick="event.stopPropagation()">
+      <div class="sa-modal-header">
+        <span class="sa-modal-title">Modifier la licence</span>
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
+      </div>
+      <div class="sa-modal-body">
+        <div class="sa-form-group"><label class="sa-form-label">Nom de la boutique</label><input class="sa-input" id="edit-lic-boutique" type="text" value="${l.boutiqueName||''}"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Nom de l'administrateur</label><input class="sa-input" id="edit-lic-admin-name" type="text" value="${l.adminName||''}"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Email de l'administrateur</label><input class="sa-input" id="edit-lic-admin-email" type="email" value="${l.adminEmail||''}"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="sa-form-group"><label class="sa-form-label">Plan</label>
+            <select class="sa-select" id="edit-lic-plan">
+              <option value="standard" ${l.plan==='standard'?'selected':''}>Standard</option>
+              <option value="premium" ${l.plan==='premium'?'selected':''}>Premium</option>
+              <option value="trial" ${l.plan==='trial'?'selected':''}>Essai (Trial)</option>
+            </select>
+          </div>
+          <div class="sa-form-group"><label class="sa-form-label">Expiration</label><input class="sa-input" id="edit-lic-expires" type="date" value="${l.expiresAt||''}"></div>
+        </div>
+        <div class="sa-form-group"><label class="sa-form-label">Statut</label>
+          <select class="sa-select" id="edit-lic-status">
+            <option value="active" ${l.status==='active'?'selected':''}>Actif</option>
+            <option value="suspended" ${l.status==='suspended'?'selected':''}>Suspendu</option>
+            <option value="trial" ${l.status==='trial'?'selected':''}>Essai</option>
+          </select>
+        </div>
+        <div class="sa-form-group"><label class="sa-form-label">Notes</label><input class="sa-input" id="edit-lic-notes" type="text" value="${l.notes||''}"></div>
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="sa-btn sa-btn-primary" onclick="updateLicence('${id}')">Enregistrer</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function updateLicence(id){
+  const l=SA.licences.find(x=>x.id===id);if(!l)return;
+  l.boutiqueName=(document.getElementById('edit-lic-boutique').value||'').trim()||l.boutiqueName;
+  l.adminName=(document.getElementById('edit-lic-admin-name').value||'').trim()||l.adminName;
+  l.adminEmail=(document.getElementById('edit-lic-admin-email').value||'').trim()||l.adminEmail;
+  l.plan=document.getElementById('edit-lic-plan').value;
+  l.status=document.getElementById('edit-lic-status').value;
+  l.expiresAt=document.getElementById('edit-lic-expires').value||'';
+  l.notes=document.getElementById('edit-lic-notes').value||'';
+  if(FIREBASE_OK){const{id:_,...rest}=l;await fbDB.ref('licences/'+id).update(rest);}
+  saveSALicencesLocal();
+  closeModal();showToast('Licence mise à jour !');renderSAPage();
+}
+
+async function toggleLicenceStatus(id,newStatus){
+  const l=SA.licences.find(x=>x.id===id);if(!l)return;
+  const msg=newStatus==='suspended'?'Suspendre cette licence ? L\'admin ne pourra plus se connecter.':'Réactiver cette licence ?';
+  if(!confirm(msg))return;
+  l.status=newStatus;
+  if(FIREBASE_OK){await fbDB.ref('licences/'+id+'/status').set(newStatus);}
+  saveSALicencesLocal();
+  showToast(newStatus==='suspended'?'Licence suspendue':'Licence activée');renderSAPage();
+}
+
+async function deleteLicence(id){
+  if(!confirm('Supprimer définitivement cette licence ?'))return;
+  SA.licences=SA.licences.filter(l=>l.id!==id);
+  if(FIREBASE_OK){await fbDB.ref('licences/'+id).remove();}
+  saveSALicencesLocal();
+  document.getElementById('sa-licences-badge').textContent=SA.licences.length;
+  showToast('Licence supprimée');renderSAPage();
+}
+
+// ========== ADMINS ==========
+function renderSAAdmins(){
+  return`
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#E2E8F0">Comptes Administrateurs</h2>
+    <button class="sa-btn sa-btn-primary" onclick="openCreateAdminModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Créer un admin
+    </button>
+  </div>
+  <div class="sa-card">
+    <div class="sa-card-header">
+      <span class="sa-card-title">Administrateurs (${SA.admins_list.length})</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.3)">Comptes ayant accès au tableau de bord boutique</span>
+    </div>
+    <table class="sa-table">
+      <thead><tr><th>Administrateur</th><th>Email</th><th>Boutique associée</th><th>Créé le</th><th style="text-align:right">Actions</th></tr></thead>
+      <tbody>
+        ${SA.admins_list.length===0?`<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px">Aucun administrateur créé</td></tr>`:''}
+        ${SA.admins_list.map(a=>`
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1A3528,#2E6049);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#E8C97A;flex-shrink:0">${initials(a.name||a.email||'?')}</div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:#E2E8F0">${a.name||'—'}</div>
+                <span class="badge-active" style="font-size:10px">Admin</span>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:rgba(255,255,255,0.5)">${a.email||'—'}</td>
+          <td style="font-size:13px;color:rgba(255,255,255,0.5)">${a.boutique||'—'}</td>
+          <td style="font-size:12px;color:rgba(255,255,255,0.3)">${a.createdAt?new Date(a.createdAt).toLocaleDateString('fr-SN'):'—'}</td>
+          <td style="text-align:right">
+            <button class="sa-btn sa-btn-danger sa-btn-sm" onclick="deleteAdminAccount('${a.uid||a.email}','${a.email||''}')">🗑 Supprimer</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function openCreateAdminModal(){
+  const availableLicences=SA.licences.filter(l=>l.status==='active'||l.status==='trial');
+  openModal(`
+  <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="sa-modal" onclick="event.stopPropagation()">
+      <div class="sa-modal-header">
+        <span class="sa-modal-title">Créer un administrateur</span>
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
+      </div>
+      <div class="sa-modal-body">
+        <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6">
+          ℹ️ L'administrateur recevra un accès au tableau de bord boutique avec les identifiants définis ici.
+        </div>
+        <div class="sa-form-group"><label class="sa-form-label">Nom complet *</label><input class="sa-input" id="new-admin-name" type="text" placeholder="Prénom Nom"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Email *</label><input class="sa-input" id="new-admin-email" type="email" placeholder="admin@boutique.com"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Mot de passe *</label><input class="sa-input" id="new-admin-pass" type="password" placeholder="Min. 8 caractères"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Confirmer le mot de passe</label><input class="sa-input" id="new-admin-pass2" type="password" placeholder="Répétez le mot de passe"></div>
+        <div class="sa-form-group"><label class="sa-form-label">Licence associée</label>
+          <select class="sa-select" id="new-admin-licence">
+            <option value="">— Aucune licence —</option>
+            ${availableLicences.map(l=>`<option value="${l.id}">${l.boutiqueName} (${l.plan})</option>`).join('')}
+          </select>
+        </div>
+        <div class="sa-form-group"><label class="sa-form-label">Boutique / Nom du commerce</label><input class="sa-input" id="new-admin-boutique" type="text" placeholder="Ex: CHIC & GLAM Dakar"></div>
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="sa-btn sa-btn-primary" onclick="createAdminAccount()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Créer l'administrateur
+        </button>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function createAdminAccount(){
+  const name=(document.getElementById('new-admin-name').value||'').trim();
+  const email=(document.getElementById('new-admin-email').value||'').trim();
+  const pass=document.getElementById('new-admin-pass').value||'';
+  const pass2=document.getElementById('new-admin-pass2').value||'';
+  const licenceId=document.getElementById('new-admin-licence').value||'';
+  const boutique=(document.getElementById('new-admin-boutique').value||'').trim();
+  if(!name||!email||!pass){showToast('Remplissez les champs obligatoires','error');return;}
+  if(pass.length<8){showToast('Mot de passe trop court (min. 8 caractères)','error');return;}
+  if(pass!==pass2){showToast('Les mots de passe ne correspondent pas','error');return;}
+  // Créer le compte Firebase Auth
+  if(FIREBASE_OK){
+    try{
+      const cred=await auth.createUserWithEmailAndPassword(email,pass);
+      await cred.user.updateProfile({displayName:name});
+      const adminData={name,email,boutique,licenceId,createdAt:new Date().toISOString(),createdBy:'superadmin'};
+      await fbDB.ref('admins/'+cred.user.uid).set(adminData);
+      // Associer la licence si choisie
+      if(licenceId){
+        const lic=SA.licences.find(l=>l.id===licenceId);
+        if(lic){lic.adminUid=cred.user.uid;await fbDB.ref('licences/'+licenceId+'/adminUid').set(cred.user.uid);}
+      }
+      SA.admins_list.push({uid:cred.user.uid,name,email,boutique,licenceId,createdAt:adminData.createdAt});
+      // Configurer la boutique initiale pour cet admin
+      const shopCfg={adminEmail:email,adminPassword:pass,adminName:name,shopName:boutique||name+" Boutique"};
+      await fbDB.ref('config').set(shopCfg);
+      saveSALicencesLocal();
+      closeModal();showToast(`Admin ${name} créé avec succès !`);renderSAPage();
+    }catch(e){
+      if(e.code==='auth/email-already-in-use'){showToast('Cet email est déjà utilisé','error');}
+      else{showToast('Erreur: '+e.message,'error');}
+    }
+  } else {
+    // Mode local: stocker dans localStorage
+    const newUid='adm_'+Date.now();
+    const adminData={uid:newUid,name,email,boutique,licenceId,createdAt:new Date().toISOString()};
+    SA.admins_list.push(adminData);
+    // Stocker aussi les credentials
+    const admins=LS.get('sa_admin_credentials')||[];
+    admins.push({uid:newUid,email,password:pass,name,boutique});
+    LS.set('sa_admin_credentials',admins);
+    if(licenceId){const lic=SA.licences.find(l=>l.id===licenceId);if(lic)lic.adminUid=newUid;}
+    saveSALicencesLocal();
+    closeModal();showToast(`Admin ${name} créé (mode local)`);renderSAPage();
+  }
+}
+
+async function deleteAdminAccount(uid,email){
+  if(!confirm(`Supprimer le compte admin ${email} ? Cette action est irréversible.`))return;
+  SA.admins_list=SA.admins_list.filter(a=>a.uid!==uid&&a.email!==email);
+  if(FIREBASE_OK){await fbDB.ref('admins/'+uid).remove();}
+  saveSALicencesLocal();
+  showToast('Compte admin supprimé');renderSAPage();
+}
+
+// ========== PARAMETRES SA ==========
+function renderSAParametres(){
+  const currentEmail=getSuperAdminEmail();
+  return`
+  <div style="max-width:600px">
+    <div class="sa-card" style="margin-bottom:16px">
+      <div class="sa-card-header"><span class="sa-card-title">🛡️ Informations Super Admin</span></div>
+      <div class="sa-card-body">
+        <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.5)">
+          Les identifiants Super Admin sont définis dans le code source pour des raisons de sécurité maximale.<br>
+          Email actuel : <strong style="color:#A78BFA">${currentEmail}</strong>
+        </div>
+        <div style="display:flex;gap:12px">
+          <div style="flex:1;background:#0D1117;border-radius:8px;padding:14px">
+            <div style="font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.2);margin-bottom:6px;text-transform:uppercase">Licences actives</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#34D399">${SA.licences.filter(l=>l.status==='active').length}</div>
+          </div>
+          <div style="flex:1;background:#0D1117;border-radius:8px;padding:14px">
+            <div style="font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.2);margin-bottom:6px;text-transform:uppercase">Admins créés</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#A78BFA">${SA.admins_list.length}</div>
+          </div>
+          <div style="flex:1;background:#0D1117;border-radius:8px;padding:14px">
+            <div style="font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.2);margin-bottom:6px;text-transform:uppercase">Suspendues</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#F87171">${SA.licences.filter(l=>l.status==='suspended').length}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sa-card">
+      <div class="sa-card-header"><span class="sa-card-title">📋 Exporter les données</span></div>
+      <div class="sa-card-body">
+        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px">Téléchargez la liste complète des licences et administrateurs.</p>
+        <div style="display:flex;gap:10px">
+          <button class="sa-btn sa-btn-outline" onclick="exportSAData('licences')">📥 Exporter licences (JSON)</button>
+          <button class="sa-btn sa-btn-outline" onclick="exportSAData('admins')">📥 Exporter admins (JSON)</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function exportSAData(type){
+  const data=type==='licences'?SA.licences:SA.admins_list;
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`${type}_${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(url);
+  showToast('Export téléchargé !');
 }
 
 // ==================== ENTER ADMIN ====================
@@ -704,33 +1632,13 @@ function enterAdmin(name){
   document.getElementById('sidebar-avatar').textContent=initials(name);
   document.getElementById('sidebar-name').textContent=name;
   document.getElementById('today-date').textContent=todayStr();
+  applyShopBranding();
   setScreen('screen-admin');
-  if(!DEMO_MODE)setupFirestoreListeners();
+  if(FIREBASE_OK&&!S._listenersSetup){S._listenersSetup=true;setupRealtimeListeners();}
   updatePendingCount();
   adminNav('dashboard',document.querySelector('.nav-item'));
 }
 
-// ==================== FIREBASE LISTENERS ====================
-function setupFirestoreListeners(){
-  unsubscribers.forEach(u=>u());unsubscribers=[];
-  unsubscribers.push(db.collection('products').onSnapshot(snap=>{
-    S.products=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(S.currentPage==='produits'||S.currentPage==='caisse')renderAdminPage();
-  }));
-  unsubscribers.push(db.collection('orders').orderBy('createdAt','desc').onSnapshot(snap=>{
-    S.orders=snap.docs.map(d=>({id:d.id,...d.data()}));
-    updatePendingCount();
-    if(S.currentPage==='commandes')renderAdminPage();
-  }));
-  unsubscribers.push(db.collection('clients').onSnapshot(snap=>{
-    S.clients=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(S.currentPage==='clients')renderAdminPage();
-  }));
-  unsubscribers.push(db.collection('ventes').orderBy('date','desc').onSnapshot(snap=>{
-    S.ventes=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(S.currentPage==='ventes')renderAdminPage();
-  }));
-}
 
 function updatePendingCount(){
   const cnt=S.orders.filter(o=>o.status==='pending').length;
@@ -746,30 +1654,26 @@ function updatePendingCount(){
 async function saveProduct(id,data,imageFile){
   let imageUrl=data.imageUrl||'';
   if(imageFile){
-    if(DEMO_MODE){
-      imageUrl=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(imageFile);});
-    } else {
-      const ref=storage.ref(`products/${id||uid()}/${imageFile.name}`);
-      const uploadTask=await ref.put(imageFile);
-      imageUrl=await uploadTask.ref.getDownloadURL();
-    }
+    const base64=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(imageFile);});
+    imageUrl=await uploadImage(base64,`products/${id||uid()}/${imageFile.name}`);
   }
   const productData={...data,imageUrl};
-  if(DEMO_MODE){
-    if(id){const idx=S.products.findIndex(p=>p.id===id);if(idx>=0)S.products[idx]={...S.products[idx],...productData};}
-    else S.products.push({id:uid(),...productData});
-    renderAdminPage();
+  const productId=id||uid();
+  if(FIREBASE_OK){
+    await fbDB.ref('products/'+productId).set(productData);
+    // Les listeners temps réel s'occupent de mettre à jour S.products
   } else {
-    if(id)await db.collection('products').doc(id).update(productData);
-    else await db.collection('products').add({...productData,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    if(id){const idx=S.products.findIndex(p=>p.id===id);if(idx>=0)S.products[idx]={...S.products[idx],...productData};}
+    else S.products.push({id:productId,...productData});
+    LS.save();renderAdminPage();
   }
   showToast(id?'Produit modifié !':'Produit ajouté !');
 }
 
 async function deleteProduct(id){
   if(!confirm('Supprimer ce produit définitivement ?'))return;
-  if(DEMO_MODE){S.products=S.products.filter(p=>p.id!==id);renderAdminPage();}
-  else await db.collection('products').doc(id).delete();
+  if(FIREBASE_OK){await fbDB.ref('products/'+id).remove();}
+  else{S.products=S.products.filter(p=>p.id!==id);LS.save();renderAdminPage();}
   showToast('Produit supprimé');
 }
 
@@ -779,8 +1683,8 @@ async function updateStock(id,qty,type){
   if(type==='add')newStock+=qty;
   else if(type==='remove')newStock=Math.max(0,p.stock-qty);
   else newStock=qty;
-  if(DEMO_MODE){p.stock=newStock;renderAdminPage();}
-  else await db.collection('products').doc(id).update({stock:newStock});
+  if(FIREBASE_OK){await fbDB.ref('products/'+id+'/stock').set(newStock);}
+  else{p.stock=newStock;LS.save();renderAdminPage();}
   showToast(`Stock mis à jour: ${newStock} unités`);
 }
 
@@ -790,20 +1694,22 @@ async function placeClientOrder(){
   const total=S.clientCart.reduce((s,i)=>s+i.prix*i.qty,0);
   const clientName=S.clientUser?S.clientUser.name:'Client Anonyme';
   const clientEmail=S.clientUser?S.clientUser.email:'';
+  const clientPhone=S.clientUser?S.clientUser.phone||'':'';
+  const newId=uid();
   const orderData={
+    id:newId,
     clientId:S.clientUser?S.clientUser.uid:'guest',
-    clientName,clientEmail,
+    clientName,clientEmail,clientPhone,
     items:S.clientCart.map(i=>({productId:i.id,name:i.name,prix:i.prix,qty:i.qty,imageUrl:i.imageUrl||'',emoji:i.emoji||'👗'})),
     total,status:'pending',
-    createdAt:new Date()
+    createdAt:new Date().toISOString()
   };
-  if(DEMO_MODE){
-    S.orders.unshift({id:uid(),...orderData});
-    updatePendingCount();
+  if(FIREBASE_OK){
+    const {id:_,...rest}=orderData;
+    await fbDB.ref('orders/'+newId).set(rest);
   } else {
-    await db.collection('orders').add({...orderData,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    S.orders.unshift(orderData);LS.save();updatePendingCount();
   }
-  S.clientCart=[];
   renderClientCart();updateClientCartCount();
   openModal(`
   <div class="modal-overlay" onclick="closeModal()">
@@ -821,27 +1727,19 @@ async function placeClientOrder(){
 
 async function validateOrder(id){
   const order=S.orders.find(o=>o.id===id);if(!order)return;
-  if(DEMO_MODE){
-    order.status='validated';
-    // Add to ventes
-    S.ventes.unshift({id:uid(),date:new Date().toISOString().split('T')[0],client:order.clientName,produits:order.items.map(i=>i.name+(i.qty>1?' x'+i.qty:'')).join(', '),montant:order.total,mode:'Commande client',statut:'Payé'});
-    // Update stock
-    order.items.forEach(item=>{const p=S.products.find(x=>x.id===item.productId);if(p)p.stock=Math.max(0,p.stock-item.qty);});
-    updatePendingCount();renderAdminPage();
-  } else {
-    const batch=db.batch();
-    batch.update(db.collection('orders').doc(id),{status:'validated'});
-    order.items.forEach(item=>{batch.update(db.collection('products').doc(item.productId),{stock:firebase.firestore.FieldValue.increment(-item.qty)});});
-    await batch.commit();
-    await db.collection('ventes').add({date:new Date().toISOString().split('T')[0],client:order.clientName,produits:order.items.map(i=>i.name).join(', '),montant:order.total,mode:'Commande client',statut:'Payé',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }
+  order.status='validated';
+  S.ventes.unshift({id:uid(),date:new Date().toISOString().split('T')[0],client:order.clientName,produits:order.items.map(i=>i.name+(i.qty>1?' x'+i.qty:'')).join(', '),montant:order.total,mode:'Commande client',statut:'Payé'});
+  order.items.forEach(item=>{const p=S.products.find(x=>x.id===item.productId);if(p)p.stock=Math.max(0,p.stock-item.qty);});
+  LS.save();
+  updatePendingCount();renderAdminPage();
   showToast('Commande validée !');
 }
 
 async function rejectOrder(id){
   if(!confirm('Refuser cette commande ?'))return;
-  if(DEMO_MODE){const o=S.orders.find(x=>x.id===id);if(o)o.status='rejected';updatePendingCount();renderAdminPage();}
-  else await db.collection('orders').doc(id).update({status:'rejected'});
+  const o=S.orders.find(x=>x.id===id);if(o)o.status='rejected';
+  LS.save();
+  updatePendingCount();renderAdminPage();
   showToast('Commande refusée','info');
 }
 
@@ -850,7 +1748,7 @@ function adminNav(page,el){
   S.currentPage=page;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(el)el.classList.add('active');
-  const titles={dashboard:'Tableau de bord',caisse:'Caisse — Point de Vente',produits:'Produits & Stock',clients:'Gestion Clients',commandes:'Commandes Clients',ventes:'Historique des Ventes',dettes:'Dettes & Créances',rapports:'Rapports & Statistiques'};
+  const titles={dashboard:'Tableau de bord',caisse:'Caisse — Point de Vente',produits:'Produits & Stock',clients:'Gestion Clients',commandes:'Commandes Clients',ventes:'Historique des Ventes',dettes:'Dettes & Créances',rapports:'Rapports & Statistiques',parametres:'Paramètres de la Boutique'};
   document.getElementById('page-title').textContent=titles[page]||page;
   renderAdminPage();
 }
@@ -866,6 +1764,7 @@ function renderAdminPage(){
   else if(S.currentPage==='ventes')el.innerHTML=renderVentes();
   else if(S.currentPage==='dettes')el.innerHTML=renderDettes();
   else if(S.currentPage==='rapports'){el.innerHTML=renderRapports();renderCharts();}
+  else if(S.currentPage==='parametres')el.innerHTML=renderParametres();
 }
 
 // ==================== DASHBOARD ====================
@@ -997,24 +1896,16 @@ async function processAdminSale(){
   const statut=hasDebt?'Crédit':'Payé';
 
   const venteData={date:new Date().toISOString().split('T')[0],client:client?client.nom:'Client Anonyme',produits:S.adminCart.map(i=>i.name+(i.qty>1?' x'+i.qty:'')).join(', '),montant:total,montantVerse,resteAPayer,mode,statut};
-  if(DEMO_MODE){
-    S.adminCart.forEach(item=>{const p=S.products.find(x=>x.id===item.id);if(p)p.stock=Math.max(0,p.stock-item.qty);});
-    if(client){client.totalAchats++;client.montantTotal+=montantVerse;}
-    const newVente={id:uid(),...venteData};
-    S.ventes.unshift(newVente);
-    if(hasDebt){
-      const dette={id:uid(),client:client?client.nom:'Client Anonyme',clientId:clientId||'',venteId:newVente.id,produits:venteData.produits,montantTotal:total,montantPaye:montantVerse,date:venteData.date,statut:'en_cours',paiements:[{date:venteData.date,montant:montantVerse,note:'Acompte initial — '+mode}]};
-      S.dettes.unshift(dette);
-      updatePendingCount();
-    }
-  } else {
-    const batch=db.batch();
-    S.adminCart.forEach(item=>{batch.update(db.collection('products').doc(item.id),{stock:firebase.firestore.FieldValue.increment(-item.qty)});});
-    await batch.commit();
-    const venteRef=await db.collection('ventes').add({...venteData,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    if(client){await db.collection('clients').doc(client.id).update({totalAchats:firebase.firestore.FieldValue.increment(1),montantTotal:firebase.firestore.FieldValue.increment(montantVerse)});}
-    if(hasDebt){await db.collection('dettes').add({client:client?client.nom:'Client Anonyme',clientId:clientId||'',venteId:venteRef.id,produits:venteData.produits,montantTotal:total,montantPaye:montantVerse,date:venteData.date,statut:'en_cours',paiements:[{date:venteData.date,montant:montantVerse,note:'Acompte — '+mode}],createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
+  S.adminCart.forEach(item=>{const p=S.products.find(x=>x.id===item.id);if(p)p.stock=Math.max(0,p.stock-item.qty);});
+  if(client){client.totalAchats++;client.montantTotal+=montantVerse;}
+  const newVente={id:uid(),...venteData};
+  S.ventes.unshift(newVente);
+  if(hasDebt){
+    const dette={id:uid(),client:client?client.nom:'Client Anonyme',clientId:clientId||'',venteId:newVente.id,produits:venteData.produits,montantTotal:total,montantPaye:montantVerse,date:venteData.date,statut:'en_cours',paiements:[{date:venteData.date,montant:montantVerse,note:'Acompte initial — '+mode}]};
+    S.dettes.unshift(dette);
+    updatePendingCount();
   }
+  LS.save();
   if(hasDebt){showToast(`✓ Vente enregistrée — Reste à payer: ${fCFA(resteAPayer)}`, 'info');}
   else{showToast(`✓ Vente soldée — ${fCFA(total)}`);}
   S.adminCart=[];renderAdminPage();
@@ -1232,21 +2123,15 @@ async function submitClientForm(id){
   const fidelite=document.getElementById('c-fid').value;
   if(!nom){showToast('Le nom est requis !','error');return;}
   closeModal();
-  if(DEMO_MODE){
-    if(id){const c=S.clients.find(x=>x.id===id);Object.assign(c,{nom,tel,email,fidelite});}
-    else S.clients.push({id:uid(),nom,tel,email,totalAchats:0,montantTotal:0,fidelite});
-    renderAdminPage();
-  } else {
-    if(id)await db.collection('clients').doc(id).update({nom,tel,email,fidelite});
-    else await db.collection('clients').add({nom,tel,email,fidelite,totalAchats:0,montantTotal:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }
+  if(id){const c=S.clients.find(x=>x.id===id);Object.assign(c,{nom,tel,email,fidelite});}
+  else S.clients.push({id:uid(),nom,tel,email,totalAchats:0,montantTotal:0,fidelite});
+  LS.save();renderAdminPage();
   showToast(id?'Client modifié !':'Client ajouté !');
 }
 
 async function deleteClientRecord(id){
   if(!confirm('Supprimer ce client ?'))return;
-  if(DEMO_MODE){S.clients=S.clients.filter(c=>c.id!==id);renderAdminPage();}
-  else await db.collection('clients').doc(id).delete();
+  if(DEMO_MODE||true){S.clients=S.clients.filter(c=>c.id!==id);LS.save();renderAdminPage();}
   showToast('Client supprimé');
 }
 
@@ -1270,6 +2155,7 @@ function renderCommandes(){
           <div>
             <div class="fw-6">${o.clientName}</div>
             <div class="text-xs text-muted">${o.clientEmail||'Email non renseigné'} · ${timeAgo(o.createdAt)}</div>
+            ${o.clientPhone?`<div style="margin-top:3px"><a href="tel:${o.clientPhone.replace(/\s/g,'')}" style="display:inline-flex;align-items:center;gap:5px;background:rgba(58,122,90,0.12);border:1px solid rgba(58,122,90,0.3);border-radius:6px;padding:3px 9px;font-size:12px;font-weight:600;color:var(--green2);text-decoration:none">📞 ${o.clientPhone}</a></div>`:`<div style="margin-top:3px;font-size:11px;color:var(--danger)">⚠️ Téléphone non renseigné</div>`}
           </div>
         </div>
         <div class="flex items-center gap-3">
@@ -1332,11 +2218,10 @@ function renderVentes(){
 async function annulerVente(id){
   const v=S.ventes.find(x=>x.id===id);if(!v)return;
   if(!confirm(`Annuler la vente de ${fCFA(v.montant)} pour ${v.client} ?\n\nLe stock sera remis à jour si possible.`))return;
-  if(DEMO_MODE){
+  if(DEMO_MODE||true){
     v.statut='Annulé';
+    LS.save();
     renderAdminPage();
-  } else {
-    await db.collection('ventes').doc(id).update({statut:'Annulé'});
   }
   showToast('Vente annulée','info');
 }
@@ -1474,7 +2359,7 @@ function creerDette(){
   if(!produits||total<=0){showToast('Remplissez les champs requis','error');return;}
   const today=new Date().toISOString().split('T')[0];
   const dette={id:uid(),client:client?client.nom:'Client Anonyme',clientId:clientId||'',venteId:'',produits,montantTotal:total,montantPaye:verse,date:today,statut:verse>=total?'soldee':'en_cours',paiements:verse>0?[{date:today,montant:verse,note}]:[]};
-  if(DEMO_MODE){S.dettes.unshift(dette);updatePendingCount();renderAdminPage();}
+  if(DEMO_MODE||true){S.dettes.unshift(dette);LS.save();updatePendingCount();renderAdminPage();}
   closeModal();
   showToast('Créance enregistrée !');
 }
@@ -1511,10 +2396,11 @@ async function enregistrerVersement(detteId){
   const today=new Date().toISOString().split('T')[0];
   const reste=d.montantTotal-d.montantPaye;
   const actualMontant=Math.min(montant,reste);
-  if(DEMO_MODE){
+  if(DEMO_MODE||true){
     d.montantPaye+=actualMontant;
     d.paiements.push({date:today,montant:actualMontant,note});
     if(d.montantPaye>=d.montantTotal){d.statut='soldee';}
+    LS.save();
     updatePendingCount();renderAdminPage();
   }
   closeModal();
@@ -1527,9 +2413,10 @@ async function solderDette(detteId){
   const reste=d.montantTotal-d.montantPaye;
   if(!confirm(`Solder la dette de ${d.client} ?\nMontant restant: ${fCFA(reste)}`))return;
   const today=new Date().toISOString().split('T')[0];
-  if(DEMO_MODE){
+  if(DEMO_MODE||true){
     d.montantPaye=d.montantTotal;d.statut='soldee';
     d.paiements.push({date:today,montant:reste,note:'Solde complet'});
+    LS.save();
     updatePendingCount();renderAdminPage();
   }
   showToast('🎉 Dette soldée !');
@@ -1537,7 +2424,7 @@ async function solderDette(detteId){
 
 async function supprimerDette(detteId){
   if(!confirm('Supprimer cette créance définitivement ?'))return;
-  if(DEMO_MODE){S.dettes=S.dettes.filter(d=>d.id!==detteId);updatePendingCount();renderAdminPage();}
+  if(DEMO_MODE||true){S.dettes=S.dettes.filter(d=>d.id!==detteId);LS.save();updatePendingCount();renderAdminPage();}
   showToast('Créance supprimée','info');
 }
 
@@ -1573,14 +2460,140 @@ function renderCharts(){
   if(mc)new Chart(mc,{type:'doughnut',data:{labels:['Espèces','Mobile Money','Carte','Virement'],datasets:[{data:[45,30,20,5],backgroundColor:['#1A3528','#C9A84C','#2E6049','#E8C97A']}]},options:{plugins:{legend:{position:'bottom'}}}});
 }
 
+// ==================== PARAMÈTRES ====================
+function renderParametres(){
+  const cfg=getShopConfig();
+  return`
+  <div style="max-width:640px">
+    <div class="card mb-4">
+      <div class="card-header"><span class="card-title">🏪 Identité de la boutique</span></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Nom de la boutique</label>
+          <input id="cfg-name" value="${cfg.shopName||'CHIC &amp; GLAM'}" placeholder="Ex: Ma Boutique">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Logo (image)</label>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
+            <div id="logo-preview" style="width:72px;height:72px;border-radius:50%;border:2px solid var(--border2);background:var(--bg2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">
+              ${cfg.shopLogo?`<img src="${cfg.shopLogo}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:28px">🏪</span>`}
+            </div>
+            <div style="flex:1">
+              <div class="img-upload-zone" onclick="document.getElementById('logo-input').click()" style="padding:16px;cursor:pointer">
+                <p class="text-sm text-muted">Cliquer pour choisir un logo</p>
+                <p class="text-xs text-muted">JPG, PNG, WebP · Recommandé: carré 200×200</p>
+              </div>
+              <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="previewLogo(this)">
+            </div>
+          </div>
+          ${cfg.shopLogo?`<button class="btn btn-danger btn-sm" onclick="removeLogo()">✕ Supprimer le logo</button>`:''}
+        </div>
+        <button class="btn btn-primary" onclick="saveShopName()">💾 Sauvegarder</button>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="card-header"><span class="card-title">🔐 Accès administrateur</span></div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Email admin</label>
+            <input id="cfg-email" type="email" value="${cfg.adminEmail||'admin@chicglam.com'}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nom admin</label>
+            <input id="cfg-aname" value="${cfg.adminName||'Administrateur'}">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Nouveau mot de passe</label>
+            <input id="cfg-pass" type="password" placeholder="Laisser vide pour ne pas changer">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmer le mot de passe</label>
+            <input id="cfg-pass2" type="password" placeholder="••••••••">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveAdminCredentials()">💾 Mettre à jour les accès</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">🗄️ Données</span></div>
+      <div class="card-body">
+        <p class="text-sm text-muted mb-3">Toutes les données sont sauvegardées localement dans ce navigateur.</p>
+        <div class="flex gap-3">
+          <button class="btn btn-outline" onclick="exportData()">⬇️ Exporter les données</button>
+          <button class="btn btn-danger" onclick="resetAllData()">⚠️ Réinitialiser toutes les données</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function previewLogo(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const url=e.target.result;
+    document.getElementById('logo-preview').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover">`;
+    saveShopConfig({shopLogo:url});
+    applyShopBranding();
+    showToast('Logo mis à jour !');
+    renderAdminPage();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo(){
+  saveShopConfig({shopLogo:''});
+  applyShopBranding();
+  showToast('Logo supprimé');
+  renderAdminPage();
+}
+
+function saveShopName(){
+  const name=document.getElementById('cfg-name').value.trim();
+  if(!name){showToast('Entrez un nom de boutique','error');return;}
+  saveShopConfig({shopName:name});
+  applyShopBranding();
+  showToast('Nom de boutique mis à jour !');
+}
+
+function saveAdminCredentials(){
+  const email=document.getElementById('cfg-email').value.trim();
+  const aname=document.getElementById('cfg-aname').value.trim();
+  const pass=document.getElementById('cfg-pass').value;
+  const pass2=document.getElementById('cfg-pass2').value;
+  if(!email){showToast('Email requis','error');return;}
+  if(pass&&pass!==pass2){showToast('Les mots de passe ne correspondent pas','error');return;}
+  const update={adminEmail:email,adminName:aname};
+  if(pass)update.adminPassword=pass;
+  saveShopConfig(update);
+  showToast('Accès admin mis à jour ! Reconnectez-vous si besoin.');
+}
+
+function exportData(){
+  const data={products:S.products,clients:S.clients,orders:S.orders,ventes:S.ventes,dettes:S.dettes,exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`boutique-export-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  showToast('Données exportées !');
+}
+
+function resetAllData(){
+  if(!confirm('⚠️ ATTENTION !\n\nCeci supprimera TOUTES les données :\nproduits, clients, commandes, ventes, dettes.\n\nCette action est irréversible.\n\nContinuer ?'))return;
+  if(!confirm('Êtes-vous absolument certain(e) ?'))return;
+  ['chic_products','chic_clients','chic_orders','chic_ventes','chic_dettes','chic_accounts'].forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+
 // ==================== CLIENT VIEW ====================
 function enterClientView(){
-  if(!DEMO_MODE){
-    db.collection('products').onSnapshot(snap=>{S.products=snap.docs.map(d=>({id:d.id,...d.data()}));renderClientCatalog();});
-  } else if(S.products.length===0){S.products=[...DEMO_PRODUCTS.map(p=>({...p}))];}
   document.getElementById('client-account-label').textContent=S.clientUser?S.clientUser.name:'Mon compte';
   const backBtn=document.getElementById('back-to-admin-btn');
   if(S.fromAdmin&&backBtn)backBtn.style.display='flex';
+  applyShopBranding();
   setScreen('screen-client');
   renderClientCats();
   renderClientCatalog();
@@ -1723,6 +2736,7 @@ function openClientAccountModal(mode='account'){
   <div id="cm-register" style="display:none">
     <div style="margin-bottom:12px"><label class="client-form-label">Nom complet</label><input class="client-input" id="cm-name" type="text" placeholder="Prénom Nom"></div>
     <div style="margin-bottom:12px"><label class="client-form-label">Email</label><input class="client-input" id="cm-remail" type="email" placeholder="votre@email.com"></div>
+    <div style="margin-bottom:12px"><label class="client-form-label">Téléphone <span style="color:#e07070">*</span></label><input class="client-input" id="cm-rphone" type="tel" placeholder="Ex: 77 123 45 67"></div>
     <div style="margin-bottom:12px"><label class="client-form-label">Mot de passe</label><input class="client-input" id="cm-rpass" type="password" placeholder="Min. 6 caractères"></div>
     <button class="client-btn-gold" onclick="clientModalRegister('${mode}')">Créer mon compte${mode==='order'?' et commander':''}</button>
   </div>
@@ -1750,7 +2764,10 @@ function clientModalLogin(mode){
   const email=(document.getElementById('cm-email')||{}).value||'';
   const pass=(document.getElementById('cm-pass')||{}).value||'';
   if(!email){showToast('Entrez votre email','error');return;}
-  S.clientUser={name:email.split('@')[0],email,uid:'cl_'+Date.now()};
+  const accounts=LS.get('accounts')||[];
+  const account=accounts.find(a=>a.email===email&&a.password===pass);
+  if(!account){showToast('Email ou mot de passe incorrect','error');return;}
+  S.clientUser={name:account.name,email:account.email,phone:account.phone||'',uid:account.uid};
   document.getElementById('client-account-label').textContent=S.clientUser.name;
   closeModal();
   if(mode==='order'){placeClientOrder();toggleClientCart();}
@@ -1760,9 +2777,17 @@ function clientModalLogin(mode){
 function clientModalRegister(mode){
   const name=(document.getElementById('cm-name')||{}).value.trim()||'';
   const email=(document.getElementById('cm-remail')||{}).value.trim()||'';
+  const phone=(document.getElementById('cm-rphone')||{}).value.trim()||'';
   if(!name||!email){showToast('Remplissez tous les champs','error');return;}
-  S.clientUser={name,email,uid:'cl_'+Date.now()};
-  S.clients.push({id:uid(),nom:name,tel:'',email,totalAchats:0,montantTotal:0,fidelite:'Standard'});
+  if(!phone||phone.replace(/\s/g,'').length<8){showToast('Numéro de téléphone requis','error');return;}
+  const accounts=LS.get('accounts')||[];
+  if(accounts.find(a=>a.email===email)){showToast('Un compte existe déjà avec cet email','error');return;}
+  const newUid='cl_'+Date.now();
+  accounts.push({uid:newUid,name,email,phone,password:'(via-modal)'});
+  LS.set('accounts',accounts);
+  S.clientUser={name,email,phone,uid:newUid};
+  S.clients.push({id:uid(),nom:name,tel:phone,email,totalAchats:0,montantTotal:0,fidelite:'Standard'});
+  LS.save();
   document.getElementById('client-account-label').textContent=name;
   closeModal();
   if(mode==='order'){placeClientOrder();toggleClientCart();}
