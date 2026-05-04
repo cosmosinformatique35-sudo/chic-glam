@@ -977,19 +977,43 @@ async function loginAdmin(){
   const email=document.getElementById('admin-email').value.trim();
   const pass=document.getElementById('admin-password').value;
   if(!email||!pass){showToast('Remplissez tous les champs','error');return;}
+
+  // Helper: vérifier les admins créés par le superadmin en local
+  function checkLocalAdminCredentials(email,pass){
+    const creds=LS.get('sa_admin_credentials')||[];
+    return creds.find(a=>a.email===email&&a.password===pass&&a.status!=='suspended');
+  }
+
   if(FIREBASE_OK){
     try{
       await auth.signInWithEmailAndPassword(email,pass);
-      // handleAuthChange prend le relais automatiquement
     }catch(e){
-      // Fallback credentials locaux
+      // Fallback 1: admin principal hardcodé
       if(email===getAdminEmail()&&pass===getAdminPassword()){
         initLocalMode();enterAdmin(getShopConfig().adminName||'Administrateur');
-      } else {showToast('Email ou mot de passe incorrect','error');}
+      } else {
+        // Fallback 2: admins créés par superadmin en local
+        const localAdmin=checkLocalAdminCredentials(email,pass);
+        if(localAdmin){
+          initLocalMode();
+          enterAdmin(localAdmin.name||localAdmin.email);
+        } else {
+          showToast('Email ou mot de passe incorrect','error');
+        }
+      }
     }
   } else {
-    if(email===getAdminEmail()&&pass===getAdminPassword()){enterAdmin(getShopConfig().adminName||'Administrateur');}
-    else showToast('Email ou mot de passe incorrect','error');
+    if(email===getAdminEmail()&&pass===getAdminPassword()){
+      enterAdmin(getShopConfig().adminName||'Administrateur');
+    } else {
+      const localAdmin=checkLocalAdminCredentials(email,pass);
+      if(localAdmin){
+        initLocalMode();
+        enterAdmin(localAdmin.name||localAdmin.email);
+      } else {
+        showToast('Email ou mot de passe incorrect','error');
+      }
+    }
   }
 }
 
@@ -1059,7 +1083,7 @@ async function doLogout(){
 // ==================== SUPER ADMIN FUNCTIONS ====================
 
 // Credentials Super Admin
-function getSuperAdminEmail(){return 'cosmosinformatique@gmail.com';}
+function getSuperAdminEmail(){return 'cosmosinformatique35@gmail.com';}
 function getSuperAdminPassword(){return 'Savoir@144014401440!';}
 
 // Toggle le formulaire SA dans la page auth
@@ -1134,6 +1158,7 @@ const SA = {
   licences:[],
   admins_list:[],
   saSearch:'',
+  adminSearch:'',
 };
 
 function loadSAData(cb){
@@ -1180,6 +1205,10 @@ function renderSAOverview(){
   const active=SA.licences.filter(l=>l.status==='active').length;
   const suspended=SA.licences.filter(l=>l.status==='suspended').length;
   const expired=SA.licences.filter(l=>isLicenceExpired(l)&&l.status!=='suspended').length;
+  const trial=SA.licences.filter(l=>l.status==='trial').length;
+  const adminCount=SA.admins_list.length;
+  const activeAdmins=SA.admins_list.filter(a=>a.status!=='suspended').length;
+  const premium=SA.licences.filter(l=>l.plan==='premium').length;
   return`
   <div class="sa-kpi-grid">
     <div class="sa-kpi" style="border-left-color:#A78BFA">
@@ -1193,9 +1222,9 @@ function renderSAOverview(){
       <div class="sa-kpi-sub">Licences en cours</div>
     </div>
     <div class="sa-kpi" style="border-left-color:#FBBF24">
-      <div class="sa-kpi-label">Expirées</div>
-      <div class="sa-kpi-value" style="color:#FBBF24">${expired}</div>
-      <div class="sa-kpi-sub">À renouveler</div>
+      <div class="sa-kpi-label">Expirées / Essai</div>
+      <div class="sa-kpi-value" style="color:#FBBF24">${expired+trial}</div>
+      <div class="sa-kpi-sub">${expired} expirée(s), ${trial} essai(s)</div>
     </div>
     <div class="sa-kpi" style="border-left-color:#F87171">
       <div class="sa-kpi-label">Suspendues</div>
@@ -1203,6 +1232,43 @@ function renderSAOverview(){
       <div class="sa-kpi-sub">Accès bloqué</div>
     </div>
   </div>
+
+  <!-- Statistiques secondaires -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px">
+      <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">👤</div>
+      <div>
+        <div style="font-size:22px;font-weight:700;color:#E2E8F0">${activeAdmins}<span style="font-size:13px;color:rgba(255,255,255,0.3);font-weight:400">/${adminCount}</span></div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px">Admins actifs</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px">
+      <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#B45309,#FBBF24);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⭐</div>
+      <div>
+        <div style="font-size:22px;font-weight:700;color:#E2E8F0">${premium}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px">Licences Premium</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px">
+      <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#065F46,#34D399);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📊</div>
+      <div>
+        <div style="font-size:22px;font-weight:700;color:#E2E8F0">${total>0?Math.round(active/total*100):0}%</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px">Taux d'activation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions rapides -->
+  <div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:16px;margin-bottom:20px">
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px">⚡ Actions rapides</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="sa-btn sa-btn-primary" onclick="saNav('licences',document.querySelectorAll('.sa-nav-item')[2]);openCreateLicenceModal()">➕ Nouvelle licence</button>
+      <button class="sa-btn sa-btn-primary" onclick="saNav('admins',document.querySelectorAll('.sa-nav-item')[3]);setTimeout(openCreateAdminModal,100)">👤 Nouvel admin</button>
+      <button class="sa-btn sa-btn-outline" onclick="exportSAData('licences')">📥 Exporter licences</button>
+      <button class="sa-btn sa-btn-outline" onclick="exportSAData('admins')">📥 Exporter admins</button>
+    </div>
+  </div>
+
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
     <div class="sa-card">
       <div class="sa-card-header">
@@ -1212,7 +1278,7 @@ function renderSAOverview(){
       <div style="padding:0">
         ${SA.licences.length===0?`<p style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;font-size:13px">Aucune licence créée</p>`:''}
         <table class="sa-table">
-          ${SA.licences.slice(0,5).map(l=>`
+          ${SA.licences.slice(-5).reverse().map(l=>`
           <tr>
             <td><div style="font-size:13px;font-weight:500;color:#E2E8F0">${l.boutiqueName||'—'}</div><div style="font-size:11px;color:rgba(255,255,255,0.3)">${l.adminEmail||'—'}</div></td>
             <td>${licencePlanBadge(l.plan)}</td>
@@ -1223,24 +1289,24 @@ function renderSAOverview(){
     </div>
     <div class="sa-card">
       <div class="sa-card-header">
-        <span class="sa-card-title">Administrateurs</span>
+        <span class="sa-card-title">Administrateurs récents</span>
         <button class="sa-btn sa-btn-primary sa-btn-sm" onclick="saNav('admins',document.querySelectorAll('.sa-nav-item')[3])">Voir tout</button>
       </div>
       <div style="padding:0">
         ${SA.admins_list.length===0?`<p style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;font-size:13px">Aucun admin créé</p>`:''}
         <table class="sa-table">
-          ${SA.admins_list.slice(0,5).map(a=>`
+          ${SA.admins_list.slice(-5).reverse().map(a=>`
           <tr>
             <td>
               <div style="display:flex;align-items:center;gap:8px">
-                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${initials(a.name||a.email||'?')}</div>
+                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,${a.status==='suspended'?'#4B5563,#6B7280':'#7C3AED,#A78BFA'});display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${initials(a.name||a.email||'?')}</div>
                 <div>
                   <div style="font-size:13px;font-weight:500;color:#E2E8F0">${a.name||'—'}</div>
-                  <div style="font-size:11px;color:rgba(255,255,255,0.3)">${a.email||'—'}</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.3)">${a.boutique||a.email||'—'}</div>
                 </div>
               </div>
             </td>
-            <td><span class="badge-active">Admin</span></td>
+            <td>${a.status==='suspended'?`<span style="background:rgba(248,113,113,0.15);color:#F87171;font-size:10px;padding:2px 8px;border-radius:10px">Suspendu</span>`:`<span class="badge-active">Actif</span>`}</td>
           </tr>`).join('')}
         </table>
       </div>
@@ -1446,41 +1512,93 @@ async function deleteLicence(id){
 
 // ========== ADMINS ==========
 function renderSAAdmins(){
+  const q=(SA.adminSearch||'').toLowerCase();
+  const filtered=SA.admins_list.filter(a=>!q||(a.name||'').toLowerCase().includes(q)||(a.email||'').toLowerCase().includes(q)||(a.boutique||'').toLowerCase().includes(q));
+  const total=SA.admins_list.length;
+  const active=SA.admins_list.filter(a=>a.status!=='suspended').length;
+  const suspended=SA.admins_list.filter(a=>a.status==='suspended').length;
   return`
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#E2E8F0">Comptes Administrateurs</h2>
+  <div class="sa-kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+    <div class="sa-kpi" style="border-left-color:#A78BFA">
+      <div class="sa-kpi-label">Total Admins</div>
+      <div class="sa-kpi-value">${total}</div>
+      <div class="sa-kpi-sub">Comptes créés</div>
+    </div>
+    <div class="sa-kpi" style="border-left-color:#34D399">
+      <div class="sa-kpi-label">Actifs</div>
+      <div class="sa-kpi-value" style="color:#34D399">${active}</div>
+      <div class="sa-kpi-sub">Accès autorisé</div>
+    </div>
+    <div class="sa-kpi" style="border-left-color:#F87171">
+      <div class="sa-kpi-label">Suspendus</div>
+      <div class="sa-kpi-value" style="color:#F87171">${suspended}</div>
+      <div class="sa-kpi-sub">Accès bloqué</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px">
+    <div class="sa-search" style="flex:1;max-width:340px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input placeholder="Rechercher par nom, email, boutique..." oninput="SA.adminSearch=this.value;renderSAPage()" value="${SA.adminSearch||''}">
+    </div>
     <button class="sa-btn sa-btn-primary" onclick="openCreateAdminModal()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Créer un admin
+      Créer un administrateur
     </button>
   </div>
   <div class="sa-card">
     <div class="sa-card-header">
-      <span class="sa-card-title">Administrateurs (${SA.admins_list.length})</span>
+      <span class="sa-card-title">Administrateurs (${filtered.length})</span>
       <span style="font-size:12px;color:rgba(255,255,255,0.3)">Comptes ayant accès au tableau de bord boutique</span>
     </div>
     <table class="sa-table">
-      <thead><tr><th>Administrateur</th><th>Email</th><th>Boutique associée</th><th>Créé le</th><th style="text-align:right">Actions</th></tr></thead>
+      <thead><tr><th>Administrateur</th><th>Contact</th><th>Boutique / Licence</th><th>Permissions</th><th>Statut</th><th>Créé le</th><th style="text-align:right">Actions</th></tr></thead>
       <tbody>
-        ${SA.admins_list.length===0?`<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px">Aucun administrateur créé</td></tr>`:''}
-        ${SA.admins_list.map(a=>`
-        <tr>
+        ${filtered.length===0?`<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,0.2);padding:40px">Aucun administrateur trouvé</td></tr>`:''}
+        ${filtered.map(a=>{
+          const isSuspended=a.status==='suspended';
+          const perms=a.permissions||[];
+          const permCount=perms.length;
+          return`
+        <tr style="opacity:${isSuspended?'0.6':'1'}">
           <td>
             <div style="display:flex;align-items:center;gap:10px">
-              <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1A3528,#2E6049);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#E8C97A;flex-shrink:0">${initials(a.name||a.email||'?')}</div>
+              <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,${isSuspended?'#4B5563,#6B7280':'#1A3528,#2E6049'});display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${isSuspended?'#9CA3AF':'#E8C97A'};flex-shrink:0">${initials(a.name||a.email||'?')}</div>
               <div>
-                <div style="font-size:13px;font-weight:500;color:#E2E8F0">${a.name||'—'}</div>
-                <span class="badge-active" style="font-size:10px">Admin</span>
+                <div style="font-size:13px;font-weight:600;color:#E2E8F0">${a.name||'—'}</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:1px">ID: ${(a.uid||'local').substring(0,12)}...</div>
               </div>
             </div>
           </td>
-          <td style="font-size:13px;color:rgba(255,255,255,0.5)">${a.email||'—'}</td>
-          <td style="font-size:13px;color:rgba(255,255,255,0.5)">${a.boutique||'—'}</td>
+          <td>
+            <div style="font-size:12.5px;color:rgba(255,255,255,0.6)">${a.email||'—'}</div>
+            ${a.phone?`<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px">📞 ${a.phone}</div>`:''}
+          </td>
+          <td>
+            <div style="font-size:13px;color:rgba(255,255,255,0.6)">${a.boutique||'—'}</div>
+            ${a.licenceId?`<div style="font-size:10px;color:rgba(139,92,246,0.6);margin-top:2px">🔑 ${a.licenceId.substring(0,16)}...</div>`:'<div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:2px">Sans licence</div>'}
+          </td>
+          <td>
+            ${permCount===0?`<span style="font-size:11px;color:rgba(255,255,255,0.2)">Toutes (défaut)</span>`:
+            `<span style="font-size:11px;color:#A78BFA;background:rgba(139,92,246,0.15);padding:2px 8px;border-radius:10px">${permCount} module${permCount>1?'s':''}</span>`}
+          </td>
+          <td>
+            ${isSuspended
+              ?`<span style="background:rgba(248,113,113,0.15);color:#F87171;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px">⊘ Suspendu</span>`
+              :`<span style="background:rgba(52,211,153,0.15);color:#34D399;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px">✓ Actif</span>`}
+          </td>
           <td style="font-size:12px;color:rgba(255,255,255,0.3)">${a.createdAt?new Date(a.createdAt).toLocaleDateString('fr-SN'):'—'}</td>
           <td style="text-align:right">
-            <button class="sa-btn sa-btn-danger sa-btn-sm" onclick="deleteAdminAccount('${a.uid||a.email}','${a.email||''}')">🗑 Supprimer</button>
+            <div style="display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap">
+              <button class="sa-btn sa-btn-outline sa-btn-sm" onclick="openEditAdminModal('${a.uid||a.email}')" title="Modifier">✏️</button>
+              <button class="sa-btn sa-btn-outline sa-btn-sm" onclick="openResetPasswordModal('${a.uid||a.email}')" title="Réinitialiser mot de passe">🔑</button>
+              <button class="sa-btn sa-btn-outline sa-btn-sm" onclick="showAdminCredentials('${a.uid||a.email}')" title="Voir identifiants">👁</button>
+              ${isSuspended
+                ?`<button class="sa-btn sa-btn-success sa-btn-sm" onclick="toggleAdminStatus('${a.uid||a.email}','active')" title="Réactiver">✓ Activer</button>`
+                :`<button class="sa-btn sa-btn-danger sa-btn-sm" onclick="toggleAdminStatus('${a.uid||a.email}','suspended')" title="Suspendre">⊘</button>`}
+              <button class="sa-btn sa-btn-danger sa-btn-sm" onclick="deleteAdminAccount('${a.uid||a.email}','${a.email||''}')" title="Supprimer">🗑</button>
+            </div>
           </td>
-        </tr>`).join('')}
+        </tr>`}).join('')}
       </tbody>
     </table>
   </div>`;
@@ -1488,28 +1606,73 @@ function renderSAAdmins(){
 
 function openCreateAdminModal(){
   const availableLicences=SA.licences.filter(l=>l.status==='active'||l.status==='trial');
+  const allModules=[
+    {key:'dashboard',label:'📊 Tableau de bord'},
+    {key:'caisse',label:'🛒 Caisse / Vente'},
+    {key:'produits',label:'📦 Produits & Stock'},
+    {key:'clients',label:'👥 Clients'},
+    {key:'commandes',label:'📋 Commandes'},
+    {key:'ventes',label:'📈 Historique Ventes'},
+    {key:'dettes',label:'💰 Dettes & Créances'},
+    {key:'rapports',label:'📉 Rapports'},
+    {key:'parametres',label:'⚙️ Paramètres boutique'},
+  ];
   openModal(`
   <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
-    <div class="sa-modal" onclick="event.stopPropagation()">
+    <div class="sa-modal" style="width:580px;max-width:95vw" onclick="event.stopPropagation()">
       <div class="sa-modal-header">
-        <span class="sa-modal-title">Créer un administrateur</span>
+        <span class="sa-modal-title">➕ Créer un administrateur</span>
         <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
       </div>
       <div class="sa-modal-body">
-        <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6">
-          ℹ️ L'administrateur recevra un accès au tableau de bord boutique avec les identifiants définis ici.
+        <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6">
+          ℹ️ L'administrateur pourra se connecter avec ces identifiants pour gérer sa boutique.
+          <strong style="color:#A78BFA;display:block;margin-top:4px">⚡ Mode local actif — les identifiants sont sauvegardés sécurisément.</strong>
         </div>
-        <div class="sa-form-group"><label class="sa-form-label">Nom complet *</label><input class="sa-input" id="new-admin-name" type="text" placeholder="Prénom Nom"></div>
-        <div class="sa-form-group"><label class="sa-form-label">Email *</label><input class="sa-input" id="new-admin-email" type="email" placeholder="admin@boutique.com"></div>
-        <div class="sa-form-group"><label class="sa-form-label">Mot de passe *</label><input class="sa-input" id="new-admin-pass" type="password" placeholder="Min. 8 caractères"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Nom complet *</label><input class="sa-input" id="new-admin-name" type="text" placeholder="Prénom Nom"></div>
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Téléphone</label><input class="sa-input" id="new-admin-phone" type="tel" placeholder="Ex: 77 123 45 67"></div>
+        </div>
+        <div class="sa-form-group mt-2"><label class="sa-form-label">Email *</label><input class="sa-input" id="new-admin-email" type="email" placeholder="admin@boutique.com"></div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end" class="sa-form-group">
+          <div><label class="sa-form-label">Mot de passe * <span style="color:rgba(255,255,255,0.25);font-weight:400;letter-spacing:0">(min. 8 caractères)</span></label>
+            <div style="position:relative">
+              <input class="sa-input" id="new-admin-pass" type="text" placeholder="Entrez ou générez un mot de passe" style="padding-right:36px">
+              <button type="button" onclick="document.getElementById('new-admin-pass').type=document.getElementById('new-admin-pass').type==='text'?'password':'text'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:rgba(255,255,255,0.3)">👁</button>
+            </div>
+          </div>
+          <button type="button" class="sa-btn sa-btn-outline" onclick="const p=generateSecurePassword();document.getElementById('new-admin-pass').value=p;document.getElementById('new-admin-pass').type='text';showToast('Mot de passe généré !')" style="white-space:nowrap;height:40px;margin-bottom:0">🎲 Générer</button>
+        </div>
         <div class="sa-form-group"><label class="sa-form-label">Confirmer le mot de passe</label><input class="sa-input" id="new-admin-pass2" type="password" placeholder="Répétez le mot de passe"></div>
-        <div class="sa-form-group"><label class="sa-form-label">Licence associée</label>
-          <select class="sa-select" id="new-admin-licence">
-            <option value="">— Aucune licence —</option>
-            ${availableLicences.map(l=>`<option value="${l.id}">${l.boutiqueName} (${l.plan})</option>`).join('')}
-          </select>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Licence associée</label>
+            <select class="sa-select" id="new-admin-licence">
+              <option value="">— Aucune licence —</option>
+              ${availableLicences.map(l=>`<option value="${l.id}">${l.boutiqueName} (${l.plan})</option>`).join('')}
+            </select>
+          </div>
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Nom de la boutique</label><input class="sa-input" id="new-admin-boutique" type="text" placeholder="Ex: CHIC & GLAM Dakar"></div>
         </div>
-        <div class="sa-form-group"><label class="sa-form-label">Boutique / Nom du commerce</label><input class="sa-input" id="new-admin-boutique" type="text" placeholder="Ex: CHIC & GLAM Dakar"></div>
+
+        <div style="margin-top:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <label style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);font-weight:500">Modules autorisés</label>
+            <div style="display:flex;gap:8px">
+              <button type="button" onclick="document.querySelectorAll('.perm-cb').forEach(c=>c.checked=true)" style="font-size:11px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.3);border-radius:6px;padding:3px 10px;cursor:pointer;color:#A78BFA">Tout cocher</button>
+              <button type="button" onclick="document.querySelectorAll('.perm-cb').forEach(c=>c.checked=false)" style="font-size:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 10px;cursor:pointer;color:rgba(255,255,255,0.4)">Tout décocher</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            ${allModules.map(m=>`
+            <label style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:8px 10px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.6);transition:all .15s" onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+              <input type="checkbox" class="perm-cb" value="${m.key}" checked style="accent-color:#7C3AED;width:14px;height:14px">
+              ${m.label}
+            </label>`).join('')}
+          </div>
+          <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:10px">💡 Si tous les modules sont cochés, l'admin a accès total. Décocher un module le cache dans sa navigation.</p>
+        </div>
       </div>
       <div class="sa-modal-footer">
         <button class="sa-btn sa-btn-outline" onclick="closeModal()">Annuler</button>
@@ -1522,50 +1685,290 @@ function openCreateAdminModal(){
   </div>`);
 }
 
+// Générateur de mot de passe sécurisé
+function generateSecurePassword(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#!$';
+  let p='';for(let i=0;i<12;i++)p+=chars[Math.floor(Math.random()*chars.length)];
+  return p;
+}
+
+// Affichage des identifiants d'un admin existant
+function showAdminCredentials(uid){
+  const a=SA.admins_list.find(x=>x.uid===uid||x.email===uid);if(!a)return;
+  const creds=LS.get('sa_admin_credentials')||[];
+  const cred=creds.find(c=>c.uid===a.uid||c.email===a.email);
+  const pass=cred?cred.password:'[Non disponible - Créé via Firebase]';
+  openModal(`
+  <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="sa-modal" onclick="event.stopPropagation()">
+      <div class="sa-modal-header">
+        <span class="sa-modal-title">🔐 Identifiants de ${a.name||a.email}</span>
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
+      </div>
+      <div class="sa-modal-body">
+        <div style="background:#0D1117;border:1px solid rgba(139,92,246,0.3);border-radius:10px;padding:20px;font-family:monospace">
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:5px">Nom</div>
+            <div style="font-size:14px;color:#E2E8F0">${a.name||'—'}</div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:5px">Email (identifiant)</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="cred-email" style="font-size:14px;color:#A78BFA">${a.email||'—'}</span>
+              <button onclick="navigator.clipboard.writeText('${a.email}');showToast('Email copié !')" style="background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.3);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#A78BFA">📋 Copier</button>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:5px">Mot de passe</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="cred-pass" style="font-size:14px;color:#34D399">${pass}</span>
+              ${pass!=='[Non disponible - Créé via Firebase]'?`<button onclick="navigator.clipboard.writeText('${pass}');showToast('Mot de passe copié !')" style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#34D399">📋 Copier</button>`:''}
+            </div>
+          </div>
+          <div style="margin-bottom:0">
+            <div style="font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:5px">Boutique</div>
+            <div style="font-size:14px;color:#E2E8F0">${a.boutique||'—'}</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px">
+          <button class="sa-btn sa-btn-outline" style="flex:1" onclick="
+            const text='Identifiants Admin\\nNom: ${a.name}\\nEmail: ${a.email}\\nMot de passe: ${pass}\\nBoutique: ${a.boutique||'—'}';
+            navigator.clipboard.writeText(text);showToast('Identifiants complets copiés !')">
+            📋 Tout copier
+          </button>
+          <button class="sa-btn sa-btn-outline" onclick="closeModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>`);
+}
+
+// Réinitialiser le mot de passe d'un admin
+function openResetPasswordModal(uid){
+  const a=SA.admins_list.find(x=>x.uid===uid||x.email===uid);if(!a)return;
+  const newPass=generateSecurePassword();
+  openModal(`
+  <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="sa-modal" onclick="event.stopPropagation()">
+      <div class="sa-modal-header">
+        <span class="sa-modal-title">🔑 Réinitialiser le mot de passe</span>
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
+      </div>
+      <div class="sa-modal-body">
+        <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:16px">Réinitialisation du mot de passe pour <strong style="color:#E2E8F0">${a.name||a.email}</strong></p>
+        <div class="sa-form-group">
+          <label class="sa-form-label">Nouveau mot de passe *</label>
+          <div style="display:flex;gap:8px">
+            <input class="sa-input" id="reset-pass-input" type="text" value="${newPass}" style="flex:1">
+            <button type="button" class="sa-btn sa-btn-outline" onclick="document.getElementById('reset-pass-input').value=generateSecurePassword()">🎲</button>
+          </div>
+        </div>
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="sa-btn sa-btn-primary" onclick="doResetAdminPassword('${uid}')">Réinitialiser</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+function doResetAdminPassword(uid){
+  const newPass=(document.getElementById('reset-pass-input').value||'').trim();
+  if(!newPass||newPass.length<6){showToast('Mot de passe trop court','error');return;}
+  const a=SA.admins_list.find(x=>x.uid===uid||x.email===uid);if(!a)return;
+  const creds=LS.get('sa_admin_credentials')||[];
+  const idx=creds.findIndex(c=>c.uid===a.uid||c.email===a.email);
+  if(idx>=0){creds[idx].password=newPass;LS.set('sa_admin_credentials',creds);}
+  closeModal();
+  showToast(`Mot de passe de ${a.name||a.email} réinitialisé !`);
+}
+
+// Modifier un admin
+function openEditAdminModal(uid){
+  const a=SA.admins_list.find(x=>x.uid===uid||x.email===uid);if(!a)return;
+  const availableLicences=SA.licences.filter(l=>l.status==='active'||l.status==='trial');
+  const allModules=[
+    {key:'dashboard',label:'📊 Tableau de bord'},
+    {key:'caisse',label:'🛒 Caisse / Vente'},
+    {key:'produits',label:'📦 Produits & Stock'},
+    {key:'clients',label:'👥 Clients'},
+    {key:'commandes',label:'📋 Commandes'},
+    {key:'ventes',label:'📈 Historique Ventes'},
+    {key:'dettes',label:'💰 Dettes & Créances'},
+    {key:'rapports',label:'📉 Rapports'},
+    {key:'parametres',label:'⚙️ Paramètres boutique'},
+  ];
+  const currentPerms=a.permissions||allModules.map(m=>m.key);
+  openModal(`
+  <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="sa-modal" style="width:560px;max-width:95vw" onclick="event.stopPropagation()">
+      <div class="sa-modal-header">
+        <span class="sa-modal-title">✏️ Modifier — ${a.name||a.email}</span>
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
+      </div>
+      <div class="sa-modal-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Nom complet *</label><input class="sa-input" id="edit-admin-name" type="text" value="${a.name||''}"></div>
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Téléphone</label><input class="sa-input" id="edit-admin-phone" type="tel" value="${a.phone||''}"></div>
+        </div>
+        <div class="sa-form-group mt-2"><label class="sa-form-label">Email</label><input class="sa-input" id="edit-admin-email" type="email" value="${a.email||''}" readonly style="opacity:.5;cursor:not-allowed"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Boutique</label><input class="sa-input" id="edit-admin-boutique" type="text" value="${a.boutique||''}"></div>
+          <div class="sa-form-group" style="margin-bottom:0"><label class="sa-form-label">Licence</label>
+            <select class="sa-select" id="edit-admin-licence">
+              <option value="">— Aucune —</option>
+              ${availableLicences.map(l=>`<option value="${l.id}" ${a.licenceId===l.id?'selected':''}>${l.boutiqueName}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:14px">
+          <label style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);font-weight:500;display:block;margin-bottom:10px">Modules autorisés</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+            ${allModules.map(m=>`
+            <label style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:7px 10px;cursor:pointer;font-size:11.5px;color:rgba(255,255,255,0.6)">
+              <input type="checkbox" class="edit-perm-cb" value="${m.key}" ${currentPerms.includes(m.key)?'checked':''} style="accent-color:#7C3AED;width:13px;height:13px">
+              ${m.label}
+            </label>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="sa-btn sa-btn-primary" onclick="saveEditAdmin('${uid}')">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function saveEditAdmin(uid){
+  const a=SA.admins_list.find(x=>x.uid===uid||x.email===uid);if(!a)return;
+  a.name=(document.getElementById('edit-admin-name').value||'').trim()||a.name;
+  a.phone=(document.getElementById('edit-admin-phone').value||'').trim();
+  a.boutique=(document.getElementById('edit-admin-boutique').value||'').trim();
+  a.licenceId=document.getElementById('edit-admin-licence').value||'';
+  const cbs=document.querySelectorAll('.edit-perm-cb');
+  const perms=[...cbs].filter(c=>c.checked).map(c=>c.value);
+  a.permissions=perms;
+  // Update credentials too
+  const creds=LS.get('sa_admin_credentials')||[];
+  const idx=creds.findIndex(c=>c.uid===a.uid||c.email===a.email);
+  if(idx>=0){creds[idx].name=a.name;creds[idx].phone=a.phone;creds[idx].boutique=a.boutique;LS.set('sa_admin_credentials',creds);}
+  if(FIREBASE_OK&&a.uid&&!a.uid.startsWith('adm_')){await fbDB.ref('admins/'+a.uid).update({name:a.name,phone:a.phone||'',boutique:a.boutique,licenceId:a.licenceId,permissions:perms});}
+  saveSALicencesLocal();
+  closeModal();showToast(`Admin ${a.name} mis à jour !`);renderSAPage();
+}
+
+// Suspendre / Réactiver un admin
+async function toggleAdminStatus(uid,newStatus){
+  const a=SA.admins_list.find(x=>x.uid===uid||x.email===uid);if(!a)return;
+  const msg=newStatus==='suspended'?`Suspendre l'accès de ${a.name||a.email} ?`:`Réactiver l'accès de ${a.name||a.email} ?`;
+  if(!confirm(msg))return;
+  a.status=newStatus;
+  const creds=LS.get('sa_admin_credentials')||[];
+  const idx=creds.findIndex(c=>c.uid===a.uid||c.email===a.email);
+  if(idx>=0){creds[idx].status=newStatus;LS.set('sa_admin_credentials',creds);}
+  if(FIREBASE_OK&&a.uid&&!a.uid.startsWith('adm_')){await fbDB.ref('admins/'+a.uid+'/status').set(newStatus);}
+  saveSALicencesLocal();
+  showToast(newStatus==='suspended'?`${a.name||a.email} suspendu`:`${a.name||a.email} réactivé`);
+  renderSAPage();
+}
+
 async function createAdminAccount(){
   const name=(document.getElementById('new-admin-name').value||'').trim();
   const email=(document.getElementById('new-admin-email').value||'').trim();
+  const phone=(document.getElementById('new-admin-phone').value||'').trim();
   const pass=document.getElementById('new-admin-pass').value||'';
   const pass2=document.getElementById('new-admin-pass2').value||'';
   const licenceId=document.getElementById('new-admin-licence').value||'';
   const boutique=(document.getElementById('new-admin-boutique').value||'').trim();
+  const cbs=document.querySelectorAll('.perm-cb');
+  const permissions=[...cbs].filter(c=>c.checked).map(c=>c.value);
   if(!name||!email||!pass){showToast('Remplissez les champs obligatoires','error');return;}
   if(pass.length<8){showToast('Mot de passe trop court (min. 8 caractères)','error');return;}
-  if(pass!==pass2){showToast('Les mots de passe ne correspondent pas','error');return;}
-  // Créer le compte Firebase Auth
+  if(pass2&&pass!==pass2){showToast('Les mots de passe ne correspondent pas','error');return;}
+  // Vérifier doublon en local
+  const existingCreds=LS.get('sa_admin_credentials')||[];
+  if(existingCreds.find(c=>c.email===email)){showToast('Un admin avec cet email existe déjà','error');return;}
+
+  const doShowCredentials=(adminData,pwd)=>{
+    openModal(`
+    <div class="sa-modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="sa-modal" onclick="event.stopPropagation()">
+        <div class="sa-modal-header" style="background:rgba(52,211,153,0.08);border-bottom-color:rgba(52,211,153,0.2)">
+          <span class="sa-modal-title" style="color:#34D399">✅ Administrateur créé !</span>
+          <button style="background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,0.3)" onclick="closeModal()">×</button>
+        </div>
+        <div class="sa-modal-body">
+          <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px">Conservez précieusement ces identifiants et transmettez-les à l'administrateur.</p>
+          <div style="background:#0D1117;border:1px solid rgba(52,211,153,0.25);border-radius:10px;padding:20px;font-family:monospace">
+            <div style="display:grid;gap:14px">
+              <div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Nom</div><div style="color:#E2E8F0;font-size:14px">${adminData.name}</div></div>
+              ${adminData.phone?`<div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Téléphone</div><div style="color:#E2E8F0;font-size:14px">${adminData.phone}</div></div>`:''}
+              <div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Email (identifiant de connexion)</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="color:#A78BFA;font-size:14px">${adminData.email}</span>
+                  <button onclick="navigator.clipboard.writeText('${adminData.email}');showToast('Copié !')" style="background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.3);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#A78BFA">📋</button>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Mot de passe</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="color:#34D399;font-size:14px">${pwd}</span>
+                  <button onclick="navigator.clipboard.writeText('${pwd}');showToast('Copié !')" style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#34D399">📋</button>
+                </div>
+              </div>
+              <div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Boutique</div><div style="color:#E2E8F0;font-size:14px">${adminData.boutique||'—'}</div></div>
+            </div>
+          </div>
+          <button onclick="
+            const t='Identifiants Admin — ${adminData.name}\\nEmail: ${adminData.email}\\nMot de passe: ${pwd}\\nBoutique: ${adminData.boutique||'—'}';
+            navigator.clipboard.writeText(t);showToast('Identifiants copiés !')"
+            class="sa-btn sa-btn-outline" style="width:100%;justify-content:center;margin-top:14px">
+            📋 Copier tous les identifiants
+          </button>
+        </div>
+        <div class="sa-modal-footer">
+          <button class="sa-btn sa-btn-primary" onclick="closeModal()">Compris, c'est sauvegardé ✓</button>
+        </div>
+      </div>
+    </div>`);
+  };
+
   if(FIREBASE_OK){
     try{
       const cred=await auth.createUserWithEmailAndPassword(email,pass);
       await cred.user.updateProfile({displayName:name});
-      const adminData={name,email,boutique,licenceId,createdAt:new Date().toISOString(),createdBy:'superadmin'};
+      const adminData={name,email,phone:phone||'',boutique,licenceId,permissions,createdAt:new Date().toISOString(),createdBy:'superadmin',status:'active'};
       await fbDB.ref('admins/'+cred.user.uid).set(adminData);
-      // Associer la licence si choisie
       if(licenceId){
         const lic=SA.licences.find(l=>l.id===licenceId);
         if(lic){lic.adminUid=cred.user.uid;await fbDB.ref('licences/'+licenceId+'/adminUid').set(cred.user.uid);}
       }
-      SA.admins_list.push({uid:cred.user.uid,name,email,boutique,licenceId,createdAt:adminData.createdAt});
-      // Configurer la boutique initiale pour cet admin
-      const shopCfg={adminEmail:email,adminPassword:pass,adminName:name,shopName:boutique||name+" Boutique"};
-      await fbDB.ref('config').set(shopCfg);
+      SA.admins_list.push({uid:cred.user.uid,...adminData});
+      // Sauvegarder credentials localement aussi
+      const creds=LS.get('sa_admin_credentials')||[];
+      creds.push({uid:cred.user.uid,email,password:pass,name,phone:phone||'',boutique,status:'active'});
+      LS.set('sa_admin_credentials',creds);
       saveSALicencesLocal();
-      closeModal();showToast(`Admin ${name} créé avec succès !`);renderSAPage();
+      doShowCredentials({name,email,phone,boutique},pass);
+      renderSAPage();
     }catch(e){
       if(e.code==='auth/email-already-in-use'){showToast('Cet email est déjà utilisé','error');}
       else{showToast('Erreur: '+e.message,'error');}
     }
   } else {
-    // Mode local: stocker dans localStorage
+    // Mode local
     const newUid='adm_'+Date.now();
-    const adminData={uid:newUid,name,email,boutique,licenceId,createdAt:new Date().toISOString()};
+    const adminData={uid:newUid,name,email,phone:phone||'',boutique,licenceId,permissions,createdAt:new Date().toISOString(),status:'active'};
     SA.admins_list.push(adminData);
-    // Stocker aussi les credentials
-    const admins=LS.get('sa_admin_credentials')||[];
-    admins.push({uid:newUid,email,password:pass,name,boutique});
-    LS.set('sa_admin_credentials',admins);
+    const creds=LS.get('sa_admin_credentials')||[];
+    creds.push({uid:newUid,email,password:pass,name,phone:phone||'',boutique,status:'active'});
+    LS.set('sa_admin_credentials',creds);
     if(licenceId){const lic=SA.licences.find(l=>l.id===licenceId);if(lic)lic.adminUid=newUid;}
     saveSALicencesLocal();
-    closeModal();showToast(`Admin ${name} créé (mode local)`);renderSAPage();
+    doShowCredentials({name,email,phone,boutique},pass);
+    renderSAPage();
   }
 }
 
@@ -1580,13 +1983,14 @@ async function deleteAdminAccount(uid,email){
 // ========== PARAMETRES SA ==========
 function renderSAParametres(){
   const currentEmail=getSuperAdminEmail();
+  const creds=LS.get('sa_admin_credentials')||[];
   return`
-  <div style="max-width:600px">
+  <div style="max-width:680px">
     <div class="sa-card" style="margin-bottom:16px">
       <div class="sa-card-header"><span class="sa-card-title">🛡️ Informations Super Admin</span></div>
       <div class="sa-card-body">
         <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.5)">
-          Les identifiants Super Admin sont définis dans le code source pour des raisons de sécurité maximale.<br>
+          Les identifiants Super Admin sont définis dans le code source pour une sécurité maximale.<br>
           Email actuel : <strong style="color:#A78BFA">${currentEmail}</strong>
         </div>
         <div style="display:flex;gap:12px">
@@ -1605,13 +2009,47 @@ function renderSAParametres(){
         </div>
       </div>
     </div>
-    <div class="sa-card">
+
+    <div class="sa-card" style="margin-bottom:16px">
+      <div class="sa-card-header"><span class="sa-card-title">👥 Admins en mode local (${creds.length})</span></div>
+      <div class="sa-card-body">
+        ${creds.length===0?`<p style="font-size:13px;color:rgba(255,255,255,0.25);text-align:center;padding:20px">Aucun admin créé en mode local</p>`:`
+        <table class="sa-table">
+          <thead><tr><th>Nom</th><th>Email</th><th>Boutique</th><th>Statut</th><th style="text-align:right">Action</th></tr></thead>
+          <tbody>
+            ${creds.map(c=>`
+            <tr>
+              <td style="color:#E2E8F0;font-size:13px">${c.name||'—'}</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:12px">${c.email}</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:12px">${c.boutique||'—'}</td>
+              <td>${c.status==='suspended'?`<span style="background:rgba(248,113,113,0.15);color:#F87171;font-size:10px;padding:2px 8px;border-radius:10px">Suspendu</span>`:`<span class="badge-active" style="font-size:10px">Actif</span>`}</td>
+              <td style="text-align:right">
+                <button onclick="showAdminCredentials('${c.uid}')" class="sa-btn sa-btn-outline sa-btn-sm">👁 Voir</button>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`}
+      </div>
+    </div>
+
+    <div class="sa-card" style="margin-bottom:16px">
       <div class="sa-card-header"><span class="sa-card-title">📋 Exporter les données</span></div>
       <div class="sa-card-body">
-        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px">Téléchargez la liste complète des licences et administrateurs.</p>
-        <div style="display:flex;gap:10px">
+        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px">Téléchargez la liste complète des licences et administrateurs au format JSON.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="sa-btn sa-btn-outline" onclick="exportSAData('licences')">📥 Exporter licences (JSON)</button>
           <button class="sa-btn sa-btn-outline" onclick="exportSAData('admins')">📥 Exporter admins (JSON)</button>
+          <button class="sa-btn sa-btn-outline" onclick="exportSAData('credentials')">📥 Exporter identifiants locaux</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sa-card" style="border-color:rgba(248,113,113,0.2)">
+      <div class="sa-card-header" style="border-bottom-color:rgba(248,113,113,0.15)"><span class="sa-card-title" style="color:#F87171">⚠️ Zone dangereuse</span></div>
+      <div class="sa-card-body">
+        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px">Ces actions sont irréversibles. Procédez avec la plus grande prudence.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="sa-btn sa-btn-danger sa-btn-sm" onclick="if(confirm('Effacer TOUTES les données locales SA ? (licences, admins, identifiants)')){['sa_licences','sa_admins','sa_admin_credentials'].forEach(k=>localStorage.removeItem(k));SA.licences=[];SA.admins_list=[];renderSAPage();showToast('Données effacées');}">🗑 Effacer toutes les données locales</button>
         </div>
       </div>
     </div>
@@ -1619,10 +2057,18 @@ function renderSAParametres(){
 }
 
 function exportSAData(type){
-  const data=type==='licences'?SA.licences:SA.admins_list;
+  let data,filename;
+  if(type==='licences'){data=SA.licences;filename='licences';}
+  else if(type==='admins'){data=SA.admins_list;filename='admins';}
+  else if(type==='credentials'){
+    // Export sans les mots de passe en clair (masqués)
+    const creds=LS.get('sa_admin_credentials')||[];
+    data=creds.map(c=>({...c,password:'[MASQUÉ]'}));
+    filename='admins_credentials_export';
+  }
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`${type}_${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(url);
+  const a=document.createElement('a');a.href=url;a.download=`${filename}_${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(url);
   showToast('Export téléchargé !');
 }
 
