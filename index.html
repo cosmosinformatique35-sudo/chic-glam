@@ -869,10 +869,13 @@ function handleAuthChange(user){
       } else {
         // Vérifier si c'est un admin normal
         fbDB.ref('admins/'+user.uid).once('value').then(snap=>{
-          if(snap.exists()||user.email===getAdminEmail()){
+          // Vérifier aussi dans les credentials locaux (admins créés par superadmin)
+          const localCreds=LS.get('sa_admin_credentials')||[];
+          const localAdminEntry=localCreds.find(c=>c.uid===user.uid||c.email===user.email);
+          if(snap.exists()||user.email===getAdminEmail()||localAdminEntry){
             S.role='admin';
             setupRealtimeListeners();
-            enterAdmin(user.displayName||user.email||'Administrateur');
+            enterAdmin(user.displayName||snap.val()?.name||localAdminEntry?.name||user.email||'Administrateur');
           } else {
             S.role='client';
             fbDB.ref('users/'+user.uid).once('value').then(usnap=>{
@@ -984,36 +987,33 @@ async function loginAdmin(){
     return creds.find(a=>a.email===email&&a.password===pass&&a.status!=='suspended');
   }
 
+  // Vérifier en local d'abord (priorité aux comptes créés par superadmin)
+  const localAdmin=checkLocalAdminCredentials(email,pass);
+  if(localAdmin){
+    initLocalMode();
+    enterAdmin(localAdmin.name||localAdmin.email);
+    return;
+  }
+
+  // Vérifier admin principal hardcodé
+  if(email===getAdminEmail()&&pass===getAdminPassword()){
+    if(FIREBASE_OK){
+      try{await auth.signInWithEmailAndPassword(email,pass);}catch(e){initLocalMode();}
+    } else { initLocalMode(); }
+    enterAdmin(getShopConfig().adminName||'Administrateur');
+    return;
+  }
+
   if(FIREBASE_OK){
     try{
       await auth.signInWithEmailAndPassword(email,pass);
+      // handleAuthChange prend le relais pour les comptes Firebase
     }catch(e){
-      // Fallback 1: admin principal hardcodé
-      if(email===getAdminEmail()&&pass===getAdminPassword()){
-        initLocalMode();enterAdmin(getShopConfig().adminName||'Administrateur');
-      } else {
-        // Fallback 2: admins créés par superadmin en local
-        const localAdmin=checkLocalAdminCredentials(email,pass);
-        if(localAdmin){
-          initLocalMode();
-          enterAdmin(localAdmin.name||localAdmin.email);
-        } else {
-          showToast('Email ou mot de passe incorrect','error');
-        }
-      }
+      // Firebase auth échoué ET pas de credentials locaux trouvés ci-dessus
+      showToast('Email ou mot de passe incorrect','error');
     }
   } else {
-    if(email===getAdminEmail()&&pass===getAdminPassword()){
-      enterAdmin(getShopConfig().adminName||'Administrateur');
-    } else {
-      const localAdmin=checkLocalAdminCredentials(email,pass);
-      if(localAdmin){
-        initLocalMode();
-        enterAdmin(localAdmin.name||localAdmin.email);
-      } else {
-        showToast('Email ou mot de passe incorrect','error');
-      }
-    }
+    showToast('Email ou mot de passe incorrect','error');
   }
 }
 
