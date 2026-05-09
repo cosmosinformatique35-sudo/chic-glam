@@ -1521,17 +1521,26 @@ function showSyncStatus(status) {
 
 // Load data from Firebase on start
 function loadFromFirebase(callback) {
-    firebaseDB.ref('fashionpro').once('value').then(snapshot => {
-        const data = snapshot.val();
+    // Load main data and images in parallel
+    Promise.all([
+        firebaseDB.ref('fashionpro').once('value'),
+        firebaseDB.ref('fashionpro_images').once('value')
+    ]).then(([mainSnap, imgSnap]) => {
+        const data = mainSnap.val();
+        const images = imgSnap.val() || {};
         if (data) {
-            const savedUser = db.currentUser; // preserve session
+            const savedUser = db.currentUser;
             db = data;
             db.currentUser = savedUser;
             if (!db.clients) db.clients = [];
             if (!db.clientOrders) db.clientOrders = [];
             if (!db.expenses) db.expenses = [];
             if (!db.dettes) db.dettes = [];
-            // Sync local storage too
+            // Inject images into products
+            db.products = (db.products || []).map(p => ({
+                ...p,
+                image: images[p.id] || p.image || ''
+            }));
             localStorage.setItem('fashionpro_db', JSON.stringify(db));
         }
         firebaseLoaded = true;
@@ -1546,6 +1555,16 @@ function loadFromFirebase(callback) {
 
 // Listen for real-time changes from other devices
 function startRealtimeListener() {
+    let cachedImages = {};
+    // Listen to images node separately
+    firebaseDB.ref('fashionpro_images').on('value', snap => {
+        cachedImages = snap.val() || {};
+        // Re-inject images into current db products
+        if (db.products) {
+            db.products = db.products.map(p => ({...p, image: cachedImages[p.id] || p.image || ''}));
+        }
+    });
+
     firebaseDB.ref('fashionpro').on('value', snapshot => {
         if (isSaving) return; // skip our own writes
         const data = snapshot.val();
@@ -1557,6 +1576,10 @@ function startRealtimeListener() {
         if (!db.clientOrders) db.clientOrders = [];
         if (!db.expenses) db.expenses = [];
         if (!db.dettes) db.dettes = [];
+        // Inject images from separate node
+        db.products = (db.products || []).map(p => ({
+            ...p, image: cachedImages[p.id] || ''
+        }));
         localStorage.setItem('fashionpro_db', JSON.stringify(db));
         // Refresh current visible tab
         refreshCurrentTab();
@@ -1591,8 +1614,13 @@ function refreshCurrentTab() {
 function save() {
     localStorage.setItem('fashionpro_db', JSON.stringify(db));
     showSyncStatus('syncing');
+    // Strip images from products before sending to main node (images go to /fashionpro_images/)
     const toSave = {...db};
-    delete toSave.currentUser; // don't persist session
+    delete toSave.currentUser;
+    toSave.products = (toSave.products || []).map(p => {
+        const {image, ...rest} = p;
+        return rest;
+    });
     isSaving = true;
     firebaseDB.ref('fashionpro').set(toSave)
         .then(() => {
@@ -1837,13 +1865,31 @@ function calcMarge() {
 }
 
 // ===== IMAGE HANDLING =====
+// Compress image to max 600px wide, JPEG quality 0.65 → keeps base64 under ~100KB
+function compressImage(file, callback) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX = 600;
+            let w = img.width, h = img.height;
+            if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+            if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            callback(canvas.toDataURL('image/jpeg', 0.65));
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
 function handleImgUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { showToast('Erreur', 'Image trop grande (max 2 Mo)', 'danger'); return; }
-    const reader = new FileReader();
-    reader.onload = e => setProductImage(e.target.result);
-    reader.readAsDataURL(file);
+    if (file.size > 5 * 1024 * 1024) { showToast('Erreur', 'Image trop grande (max 5 Mo)', 'danger'); return; }
+    compressImage(file, dataUrl => setProductImage(dataUrl));
 }
 
 function handleImgDrop(event) {
@@ -1851,10 +1897,8 @@ function handleImgDrop(event) {
     document.getElementById('imgUploadZone').style.background = 'rgba(190,24,93,0.04)';
     const file = event.dataTransfer.files[0];
     if (!file || !file.type.startsWith('image/')) return;
-    if (file.size > 2 * 1024 * 1024) { showToast('Erreur', 'Image trop grande (max 2 Mo)', 'danger'); return; }
-    const reader = new FileReader();
-    reader.onload = e => setProductImage(e.target.result);
-    reader.readAsDataURL(file);
+    if (file.size > 5 * 1024 * 1024) { showToast('Erreur', 'Image trop grande (max 5 Mo)', 'danger'); return; }
+    compressImage(file, dataUrl => setProductImage(dataUrl));
 }
 
 function setProductImage(dataUrl) {
@@ -1881,8 +1925,10 @@ function saveProduct() {
 
     const editId = document.getElementById('editProductId').value;
     const imageData = document.getElementById('prodImageData').value;
+    const prodId = editId || genId();
+
     const prod = {
-        id: editId || genId(),
+        id: prodId,
         nom,
         categorie: document.getElementById('prodCategorie').value,
         genre: document.getElementById('prodGenre').value,
@@ -1894,20 +1940,32 @@ function saveProduct() {
         prixVente: pv,
         stock,
         seuilAlerte: parseInt(document.getElementById('prodSeuilAlerte').value)||3,
-        image: imageData || '',
         dateAjout: editId ? undefined : new Date().toISOString()
     };
+
     if (editId) {
         const idx = db.products.findIndex(p => p.id === editId);
         if (idx !== -1) {
             prod.dateAjout = db.products[idx].dateAjout;
-            // Keep existing image if no new one uploaded
-            if (!imageData && db.products[idx].image) prod.image = db.products[idx].image;
+            // Preserve existing image flag if no new image uploaded
+            if (!imageData && db.products[idx].image) {
+                prod.image = db.products[idx].image;
+            } else if (imageData) {
+                prod.image = imageData; // keep for localStorage/admin
+            }
             db.products[idx] = prod;
         }
     } else {
+        if (imageData) prod.image = imageData;
         db.products.push(prod);
     }
+
+    // Save image separately in Firebase to avoid size limits
+    if (imageData) {
+        firebaseDB.ref('fashionpro_images/' + prodId).set(imageData)
+            .catch(err => console.error('Image save error:', err));
+    }
+
     save();
     resetProductForm();
     renderProducts();
@@ -2698,6 +2756,17 @@ function checkPortalMode() {
 
 // Real-time listener for client portal
 function startClientRealtimeListener() {
+    let cachedImages = {};
+    // Listen to images node separately
+    firebaseDB.ref('fashionpro_images').on('value', snap => {
+        cachedImages = snap.val() || {};
+        if (db.products) {
+            db.products = db.products.map(p => ({...p, image: cachedImages[p.id] || p.image || ''}));
+            const catalogVisible = document.getElementById('clientCatalogSection')?.style.display !== 'none';
+            if (catalogVisible) renderClientCatalog();
+        }
+    });
+
     firebaseDB.ref('fashionpro').on('value', snapshot => {
         if (isSaving) return;
         const data = snapshot.val();
@@ -2706,6 +2775,10 @@ function startClientRealtimeListener() {
         db.currentUser = null;
         if (!db.clients) db.clients = [];
         if (!db.clientOrders) db.clientOrders = [];
+        // Inject images
+        db.products = (db.products || []).map(p => ({
+            ...p, image: cachedImages[p.id] || ''
+        }));
         // Refresh catalog and orders if visible
         const catalogVisible = document.getElementById('clientCatalogSection')?.style.display !== 'none';
         const ordersVisible = document.getElementById('clientOrdersSection')?.style.display !== 'none';
